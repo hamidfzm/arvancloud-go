@@ -1,0 +1,13 @@
+{
+  "name": "arvancloud-go",
+  "version": "1.0.0",
+  "author": "Hamid FzM <hamidfzm@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "build-live": "openapi-generator-cli generate -i https://www.arvancloud.ir/api-docs/live-2.0.json --skip-validate-spec -g go -o ./live",
+    "build": "yarn build-live"
+  },
+  "dependencies": {
+    "@openapitools/openapi-generator-cli": "^2.7.0"
+  }
+}
