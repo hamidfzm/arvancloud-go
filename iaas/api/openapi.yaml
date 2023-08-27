@@ -1,0 +1,6835 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  x-logo:
+    url: /images/other/arvan-api-docs-logo.svg
+    backgroundColor: white
+    altText: arvancloud
+servers:
+- url: https://napi.arvancloud.ir/ecc/v1
+security:
+- key: []
+paths:
+  /regions/:region/float-ips:
+    get:
+      description: Returns all floating-ips
+      operationId: GetAllFloatingIPs
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FloatIP'
+          description: FloatIP
+      tags:
+      - FloatingIPs
+    post:
+      description: Creates a new floating-ip
+      operationId: CreateFloatingIP
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateFloatIPRequest'
+        description: Info about the new float-ip to be created
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FloatIP'
+          description: FloatIP
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' float-ip description is too long'
+      tags:
+      - FloatingIPs
+      x-codegen-request-body-name: CreateFloatIPRequest
+  /regions/:region/float-ips/:id:
+    delete:
+      description: Deletes a floating-ip
+      operationId: DeleteFloatingIP
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Float-ip not found'
+      tags:
+      - FloatingIPs
+  /regions/:region/float-ips/:id/attach:
+    patch:
+      description: Attaches a floating-ip to a server port
+      operationId: AttachFloatIPToServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: float-ip id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FloatIPAttachRequest'
+        description: Floating-ip attachment info
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' One or more resources not found'
+      tags:
+      - FloatingIPs
+      x-codegen-request-body-name: FloatIPAttachRequest
+  /regions/:region/float-ips/detach:
+    patch:
+      description: Detaches a floating-ip from a server port
+      operationId: DetachFloatIPFromServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetachFloatIPRequest'
+        description: Floating-ip attachment info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' One or more resources not found'
+      tags:
+      - FloatingIPs
+      x-codegen-request-body-name: DetachFloatIPRequest
+  /regions/:region/float-ips/ips:
+    get:
+      description: Returns info about the IPs of the attachments to server ports
+      operationId: GetFloatingIPInternalIPs
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerIPInfo'
+          description: ServerIPInfo
+      tags:
+      - FloatingIPs
+  /regions/:region/images:
+    get:
+      description: Returns all user's images
+      operationId: GetImages
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: "`private`, `arvan`, `distro`, `migrate`, `distributions`"
+        in: query
+        name: type
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageList'
+          description: ImageList
+      tags:
+      - Images
+    post:
+      description: Upload an image to user's personal images. Currently only supporting
+        TUS. See https://tus.io
+      operationId: UploadImage
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: version of TUS that is used
+        in: header
+        name: tus-resumable
+        required: true
+        schema:
+          type: string
+      - description: The size of entire file in bytes
+        in: header
+        name: upload-length
+        required: true
+        schema:
+          type: integer
+      - description: "Additional file metadata, containing `filename`, `filetype`,\
+          \ `data`"
+        in: header
+        name: upload-metadata
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid request'
+      tags:
+      - Images
+  /regions/:region/images/:id:
+    delete:
+      description: Delete user's image
+      operationId: DeleteImage
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: id of the image to be deleted
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' image not found'
+      tags:
+      - Images
+    patch:
+      description: "Append bytes to existing image, this is done by TUS. See https://tus.io"
+      operationId: AppendDataToImage
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid request'
+      tags:
+      - Images
+  /regions/:region/images/import:
+    post:
+      description: Download image from given URL
+      operationId: ImportImageFromURL
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImportImageRequest'
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+      tags:
+      - Images
+      x-codegen-request-body-name: ImportImageRequest
+  /regions/:region/networks:
+    get:
+      description: Get all user's networks
+      operationId: GetAllNetworks
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Network'
+          description: Network
+      tags:
+      - Networks
+  /regions/:region/networks/:id/attach:
+    patch:
+      description: Attach specified network to a server
+      operationId: AttachNetworkToServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: network id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachServerToNetworkRequest'
+        description: id of the server which needs to be detached
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server can''t be connected to a public network'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' one or more resources not found'
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' can''t assign gateway ip'
+      tags:
+      - Networks
+      x-codegen-request-body-name: AttachServerToNetworkRequest
+  /regions/:region/networks/:id/detach:
+    patch:
+      description: Detach a network from server
+      operationId: DetachNetworkFromServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: network id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetachNetworkFromServerRequest'
+        description: id of the server which needs to be detached
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or network id invalid'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Internal server error'
+      tags:
+      - Networks
+      x-codegen-request-body-name: DetachNetworkFromServerRequest
+  /regions/:region/ports/:id/disable:
+    patch:
+      description: "Disable a port, which disables its interface in the attached server"
+      operationId: DisablePort
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: port id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' port id not found'
+      tags:
+      - Ports
+  /regions/:region/ports/:id/disablePortSecurity:
+    patch:
+      description: "Disable port security on given port. If disabled, security groups\
+        \ can't be assigned to this port"
+      operationId: DisablePortSecurity
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: port id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' can''t disable port security for external networks'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' port id not found'
+      tags:
+      - Ports
+  /regions/:region/ports/:id/enable:
+    patch:
+      description: "Enable a port, this enables its interface in the attached server"
+      operationId: EnablePort
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: port id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' port id not found'
+      tags:
+      - Ports
+  /regions/:region/ports/:id/enablePortSecurity:
+    patch:
+      description: Enables port security on a port
+      operationId: EnablePortSecurity
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: port id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "403":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' can''t disable port security for external networks'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' port id not found'
+      tags:
+      - Ports
+  /regions/:region/ptr/:
+    post:
+      description: Creates a PTR record on an IP
+      operationId: CreatePTR
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePTRRequest'
+        description: IP and domain info of the PTR record
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid IP address or hostname'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' IP not found'
+        "409":
+          $ref: '#/components/responses/ErrorReposnse'
+      tags:
+      - PTR
+      x-codegen-request-body-name: CreatePTRRequest
+  /regions/:region/ptr/:ip:
+    delete:
+      description: Deletes a PTR record pointing to the specified ip address
+      operationId: DeletePTR
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: the IP which PTR record points to
+        in: path
+        name: ip
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' IP not found'
+      tags:
+      - PTR
+  /regions/:region/quota:
+    get:
+      description: Returns the limit of resources the user can allocate
+      operationId: GetUserLimits
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quota'
+          description: Quota
+      tags:
+      - Quota
+  /regions/:region/reports/:id:
+    get:
+      description: Returns usage reports of a specific server
+      operationId: GetServerReports
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: "period of the reports, ex. `1m`, `1h`, `1d`"
+        in: path
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerReports'
+          description: ServerReports
+      tags:
+      - Reports
+  /regions/:region/reports/:id/:metric:
+    get:
+      description: Returns metrics for a report
+      operationId: GetReportMetric
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: the metric name to be returned
+        in: path
+        name: metric
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerReports'
+          description: ServerReports
+      tags:
+      - Reports
+  /regions/:region/securities:
+    get:
+      operationId: GetAllSecurityGroups
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityGroup'
+          description: SecurityGroup
+      tags:
+      - SecurityGroups
+    post:
+      description: Creates a security group
+      operationId: CreateSecurityGroup
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSecurityGroupRequest'
+        description: Info about the security group to be created
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityGroup'
+          description: SecurityGroup
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Description or name exceeded their character limit'
+      tags:
+      - SecurityGroups
+      x-codegen-request-body-name: CreateSecurityGroupRequest
+  /regions/:region/securities/:id:
+    delete:
+      description: Deletes a security group
+      operationId: DeleteSecurityGroup
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' security group not found'
+      tags:
+      - SecurityGroups
+  /regions/:region/securities/securitiy-rules/:id:
+    delete:
+      description: Deletes a security group rule
+      operationId: DeleteSecurityGroupRule
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityGroup'
+          description: SecurityGroup
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid data provided'
+      tags:
+      - SecurityGroups
+    post:
+      description: Creates a rule for the specified security group
+      operationId: CreateSecurityGroupRule
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: Security group id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CreateSecurityGroupRuleRequest'
+        description: Security group rule info
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - SecurityGroups
+      x-codegen-request-body-name: CreateSecurityGroupRuleRequest
+  /regions/:region/securities/securitiy-rules/cdn:
+    post:
+      description: Creates a security group based on Arvan CDN. This allows CDN IPs
+        in security rules of newly created group
+      operationId: ImportCDNSecurityGroup
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid request'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Internal server error'
+      tags:
+      - SecurityGroups
+  /regions/:region/securities/security-rules/:id:
+    get:
+      description: Returns rules for a security group
+      operationId: GetSecurityGroupRules
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SecurityGroup'
+          description: SecurityGroup
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Security group not found'
+      tags:
+      - SecurityGroups
+  /regions/:region/servers:
+    get:
+      description: Lists all user's servers in specified region
+      operationId: GetAllServers
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerDetail'
+          description: ServerDetail
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' a specified resource not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      security:
+      - key: []
+      tags:
+      - Servers
+    post:
+      description: Creates a server in specified region
+      operationId: CreateServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CreateServerRequest'
+        required: false
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerDetail'
+          description: ServerDetail
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      security:
+      - key: []
+      tags:
+      - Servers
+      x-codegen-request-body-name: CreateServerRequest
+  /regions/:region/servers/:id:
+    delete:
+      description: Delete a server
+      operationId: DeleteServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: "Force delete server. If true, the server will be forcibly deleted"
+        in: query
+        name: forceDelete
+        schema:
+          type: boolean
+      - description: The reason why this server is being deleted
+        in: query
+        name: DeleteServerReasons
+        schema:
+          type: object
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+    get:
+      description: Get a server details by its ID
+      operationId: GetServerDetails
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerDetail'
+          description: ServerDetail
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/actions:
+    get:
+      description: Returns a list of actions which are permitted to be applied on
+        the server
+      operationId: GetServerAvailableActions
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetServerActionsResponse'
+          description: GetServerActionsResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/add-public-ip:
+    post:
+      description: Add a new public ip to the server
+      operationId: AddServerPublicIP
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/AddServerPublicIPRequest'
+        description: security groups to be applied to newly added public ip
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: AddServerPublicIPRequest
+  /regions/:region/servers/:id/add-security-group:
+    post:
+      description: Attach a security group(firewall) to the server
+      operationId: AttachServerToSecurityGroup
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachServerToSecurityGroupRequest'
+        description: security group info
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: AttachServerToSecurityGroupRequest
+  /regions/:region/servers/:id/attachRoot:
+    put:
+      description: "Attaches a volume to a server as its root volume. In order to\
+        \ do this, the volume MUST be bootable and detached"
+      operationId: AttachServerRootVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/AttachServerRootVolumeRequest'
+        description: volume id to be attached as root
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: AttachServerRootVolumeRequest
+  /regions/:region/servers/:id/detachRoot:
+    put:
+      description: Detaches server root volume. The server MUST be turned off in order
+        to be detached from its root volume
+      operationId: DetachServerRootVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/hard-reboot:
+    post:
+      description: "Restart server, this operation might cause data loss"
+      operationId: HardRebootServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/instance-ha/:action:
+    post:
+      description: Enables HA(Esfandiar eyes) Feature on server. This makes sure that
+        servers are not affected from compute failures
+      operationId: ToggleInstanceHA
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      - description: "action on the feature, either `enable` or `disable`"
+        in: path
+        name: action
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/power-off:
+    post:
+      description: Power-Off the specified server
+      operationId: PowerOffServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region is not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/power-on:
+    post:
+      description: Turns on the specified server
+      operationId: PowerOnServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region is not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/reboot:
+    post:
+      description: Reboot server gracefully
+      operationId: RebootServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/rebuild:
+    post:
+      description: Rebuild server based on a new image
+      operationId: RebuildServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RebuildImageRequest'
+        description: image info for the newly built server
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ServerDetail'
+          description: ServerDetail
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: RebuildImageRequest
+  /regions/:region/servers/:id/remove-security-group:
+    post:
+      description: Detaches a server from its security group(firewall)
+      operationId: DetachServerFromSecurityGroup
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachServerToSecurityGroupRequest'
+        description: security group info
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: AttachServerToSecurityGroupRequest
+  /regions/:region/servers/:id/rename:
+    post:
+      description: Change server's display name
+      operationId: RenameServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RenameServerRequest'
+        description: server's new name
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: RenameServerRequest
+  /regions/:region/servers/:id/rescue:
+    post:
+      description: Restart server and boot into rescue mode
+      operationId: RescueServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RescueServerRequest'
+        description: rescue image info
+        required: false
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: RescueServerRequest
+  /regions/:region/servers/:id/reset-root-password:
+    post:
+      description: Reset linux based server's root password
+      operationId: ResetRootPassword
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region is not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/resize:
+    post:
+      description: Change server's flavor
+      operationId: ResizeServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResizeServerRequest'
+        description: new flavor info
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: ResizeServerRequest
+  /regions/:region/servers/:id/resizeRoot:
+    put:
+      description: Resizes server root volume without changing its flavor
+      operationId: ResizeServerRootVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/ResizeRootVolumeRequest'
+        description: New root volume size
+        required: false
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: ResizeRootVolumeRequest
+  /regions/:region/servers/:id/snapshot:
+    post:
+      description: Makes a snapshot from server's root volume
+      operationId: TakeServerSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SnapshotCreateRequest'
+        description: snapshot info
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' snapshot name more than limit'
+        "406":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' user quota limit reached'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+      x-codegen-request-body-name: payload
+  /regions/:region/servers/:id/unrescue:
+    post:
+      description: Restart server from rescue mode into normal mode
+      operationId: UnrescueServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/:id/vnc:
+    get:
+      description: Returns a noVNC url which can be used to interact with server
+      operationId: GetServerVNC
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetServerVNCRequest'
+          description: GetServerVNCRequest
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' server or region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/delete-reasons:
+    get:
+      description: Get all delete reasons for server deletion. The response ids will
+        be used in server deletion API endpoint
+      operationId: GetDeleteReasons
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DeleteServerReasons'
+          description: DeleteServerReasons
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid request'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      tags:
+      - Servers
+  /regions/:region/servers/options:
+    get:
+      description: Returns info about the server creation options in the specified
+        region
+      operationId: GetRegionServerCreationOptions
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RegionServerCreateOptions'
+          description: RegionServerCreateOptions
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' region not found'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' internal server error'
+      security:
+      - key: []
+      tags:
+      - Servers
+  /regions/:region/sizes:
+    get:
+      description: Returns info about a region's available plans
+      operationId: GetAllRegionPlans
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: filters based on cpu core count if exists
+        in: query
+        name: cpu
+        schema:
+          type: string
+      - description: filters based on RAM MB if exists
+        in: query
+        name: ram
+        schema:
+          type: string
+      - description: filters based on disk GB if exists
+        in: query
+        name: disk
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Plan'
+          description: Plan
+      tags:
+      - Plans
+  /regions/:region/sizes/:id:
+    get:
+      description: Returns a specific plan based on its code
+      operationId: GetPlanByID
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: plan id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SinglePlan'
+          description: SinglePlan
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' plan not found'
+      tags:
+      - Plans
+  /regions/:region/snapshots:
+    get:
+      description: Returns all user's snapshots
+      operationId: GetAllSnapshots
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeSnapshot'
+          description: VolumeSnapshot
+      tags:
+      - Snapshots
+  /regions/:region/snapshots/:id:
+    delete:
+      description: Deletes a snapshot
+      operationId: DeleteSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' snapshot not found'
+      tags:
+      - Snapshots
+    put:
+      description: Updates snapshot info
+      operationId: UpdateSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateVolumeSnapshotRequest'
+        description: new info for volume snapshot
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' snapshot not found'
+      tags:
+      - Snapshots
+      x-codegen-request-body-name: UpdateVolumeSnapshotRequest
+  /regions/:region/snapshots/:id/images/:
+    post:
+      description: "Creates an image as a `Personal OS` from snapshot. Note this method\
+        \ is deprecated, use `Volumes/CreateOSVolumeFromSnapshot`"
+      operationId: CreateImageFromSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVolumeFromSnapshotRequest'
+        description: snapshot info to be reverted
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' `name` and `description` character limit exceeded'
+      tags:
+      - Snapshots
+      x-codegen-request-body-name: CreateVolumeFromSnapshotRequest
+  /regions/:region/snapshots/:id/revert:
+    put:
+      description: Reverts a volume or server to its snapshot
+      operationId: RevertSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: server or volume id which the snapshot belongs to
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RevertSnapshotRequest'
+        description: snapshot info to be reverted
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - Snapshots
+      x-codegen-request-body-name: RevertSnapshotRequest
+  /regions/:region/snapshots/:id/volumes/:
+    post:
+      description: Creates a volume from snapshot
+      operationId: CreateVolumeFromSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVolumeFromSnapshotRequest'
+        description: snapshot info to be reverted
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' `name` and `description` character limit exceeded'
+      tags:
+      - Snapshots
+      x-codegen-request-body-name: CreateVolumeFromSnapshotRequest
+  /regions/:region/snapshots/servers/:id:
+    post:
+      description: Creates a snapshot from server
+      operationId: CreateSnapshotFromServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: volume id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSnapshotFromVolumeRequest'
+        description: info about the snapshot to be created
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - Snapshots
+      x-codegen-request-body-name: CreateSnapshotFromVolumeRequest
+  /regions/:region/snapshots/volumes/:id/:
+    post:
+      description: Creates a snapshot from volume
+      operationId: CreateSnapshotFromVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: volume id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSnapshotFromVolumeRequest'
+        description: info about the snapshot to be created
+        required: true
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - Snapshots
+      x-codegen-request-body-name: CreateSnapshotFromVolumeRequest
+  /regions/:region/ssh-keys:
+    get:
+      description: Reverts a volume or server to its snapshot
+      operationId: GetAllSSHKeys
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "202":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSHKey'
+          description: SSHKey
+      tags:
+      - SSHKeys
+    post:
+      description: Creates a SSH key on the specified region
+      operationId: CreateSSHKey
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSSHKeyRequest'
+        description: info about the new SSH key to be created
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "409":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' duplicate key name'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' provided public key format is invalid'
+      tags:
+      - SSHKeys
+      x-codegen-request-body-name: CreateSSHKeyRequest
+  /regions/:region/ssh-keys/:name:
+    get:
+      description: Returns a SSH key based on its name
+      operationId: GetSSHKey
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: SSH key name
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SSHKey'
+          description: SSHKey
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' key not found'
+      tags:
+      - SSHKeys
+    post:
+      description: Deletes a SSH key based on its name
+      operationId: DeleteSSHKey
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: SSH key name
+        in: path
+        name: name
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' key not found'
+      tags:
+      - SSHKeys
+  /regions/:region/subnets:
+    patch:
+      description: Updates a private network info
+      operationId: UpdatePrivateNetwork
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePrivateNetworkRequest'
+        description: id and info of the private network to be updated
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: " invalid data provided, it can be due to invalid subnet address,\
+            \ invalid gateway address, or bad dns"
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' subnet not found'
+      tags:
+      - Subnets
+      x-codegen-request-body-name: CreatePrivateNetworkRequest
+    post:
+      description: Creates a private network
+      operationId: CreatePrivateNetwork
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreatePrivateNetworkRequest'
+        description: info about new private network to be created
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: " invalid data provided, it can be due to invalid subnet address,\
+            \ invalid gateway address, or bad dns"
+      tags:
+      - Subnets
+      x-codegen-request-body-name: CreatePrivateNetworkRequest
+  /regions/:region/subnets/:id:
+    delete:
+      description: Deletes a private network
+      operationId: DeletePrivateNetwork
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: private network id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' subnet not found'
+      tags:
+      - Subnets
+    get:
+      description: Deletes a private network
+      operationId: GetPrivateNetwork
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: private network id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' subnet not found'
+      tags:
+      - Subnets
+  /regions/:region/tags:
+    get:
+      description: Returns all user's tags
+      operationId: GetAllUserTags
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tag'
+          description: Tag
+      tags:
+      - Tags
+    post:
+      description: Add a new tag
+      operationId: CreateTag
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTagRequest'
+        description: tag name
+        required: true
+      responses:
+        "201":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' tag length limit exceeded'
+      tags:
+      - Tags
+      x-codegen-request-body-name: CreateTagRequest
+  /regions/:region/tags/:id:
+    delete:
+      description: Delete a tag
+      operationId: DeleteTag
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: tag id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' tag not found'
+      tags:
+      - Tags
+    put:
+      description: Update a tag
+      operationId: UpdateTag
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: tag id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateTagRequest'
+        description: tag update info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' tag length limit exceeded'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' tag not found'
+      tags:
+      - Tags
+      x-codegen-request-body-name: UpdateTagRequest
+  /regions/:region/tags/:id/attach:
+    put:
+      description: Attach tag to an instance
+      operationId: AttachTag
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: tag id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AttachTagRequest'
+        description: instance info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid tag id'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Internal server error'
+      tags:
+      - Tags
+      x-codegen-request-body-name: AttachTagRequest
+  /regions/:region/tags/:id/detach:
+    post:
+      description: Detaches a tag from its attached instance
+      operationId: DetachTag
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: tag id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DetachTagRequest'
+        description: instance info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid tag id'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Internal server error'
+      tags:
+      - Tags
+      x-codegen-request-body-name: DetachTagRequest
+  /regions/:region/tags/batch:
+    post:
+      description: Tags multiple instances in batch mode
+      operationId: TagMultipleInstances
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BatchTagRequest'
+        description: tag name
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' one or more tags are invalid'
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' one or more resources not found'
+      tags:
+      - Tags
+      x-codegen-request-body-name: BatchTagRequest
+  /regions/:region/volumes:
+    get:
+      description: Lists all volumes
+      operationId: GetAllVolumes
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+          description: Volume
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Invalid tag id'
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' Internal server error'
+      tags:
+      - Volumes
+    post:
+      description: Creates a volume
+      operationId: CreateVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: tag id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateVolumeRequest'
+        description: info about new volume to be created
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+          description: Volume
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: " invalid data, note that size can only be positive decimal\
+            \ and in GB"
+        "422":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: " invalid data, note that size can only be positive decimal\
+            \ and in GB"
+      tags:
+      - Volumes
+      x-codegen-request-body-name: CreateVolumeRequest
+  /regions/:region/volumes/:id:
+    delete:
+      description: Deletes a specified volume
+      operationId: DeleteVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: volume id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' volume not found'
+      tags:
+      - Volumes
+    patch:
+      description: Updates volume info
+      operationId: UpdateVolume
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: volume id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/UpdateVolumeRequest'
+        description: new volume info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - Volumes
+      x-codegen-request-body-name: UpdateVolumeRequest
+  /regions/:region/volumes/:id/snapshot:
+    delete:
+      description: Delete volume snapshot
+      operationId: DeleteVolumeSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "500":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' snapshot id is invalid'
+      tags:
+      - Volumes
+    put:
+      description: Update a volume snapshot info
+      operationId: UpdateVolumeSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/UpdateVolumeSnapshotRequest'
+        description: new info for snapshot
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - Volumes
+      x-codegen-request-body-name: UpdateVolumeSnapshotRequest
+  /regions/:region/volumes/:id/snapshot/revert:
+    put:
+      description: |-
+        Reverts snapshot to a volume
+        NOTE: currently snapshot revert is not possible for volumes, this feature will be added soon
+        until then, you can create a new volume from snapshot and use it.
+      operationId: RevertVolumeSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: volume id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/RevertSnapshotRequest'
+        description: new volume info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+      tags:
+      - Volumes
+      x-codegen-request-body-name: RevertSnapshotRequest
+  /regions/:region/volumes/attach:
+    patch:
+      description: Attach a volume to an instance
+      operationId: AttachVolumeToServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/VolumeAttachDetachRequest'
+        description: volume and instance id for attachment
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided. either server or volume state is invalid
+            for this operation'
+      tags:
+      - Volumes
+      x-codegen-request-body-name: VolumeAttachDetachRequest
+  /regions/:region/volumes/detach:
+    patch:
+      description: Attach a volume to an instance
+      operationId: DetachVolumeFromServer
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/VolumeAttachDetachRequest'
+        description: volume and instance id for attachment
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "404":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' volume attachment not found. this means the volume is not
+            attached to this server'
+      tags:
+      - Volumes
+      x-codegen-request-body-name: VolumeAttachDetachRequest
+  /regions/:region/volumes/limits:
+    get:
+      description: Attach a volume to an instance
+      operationId: GetVolumeLimits
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeLimits'
+          description: VolumeLimits
+      tags:
+      - Volumes
+  /regions/:region/volumes/options:
+    get:
+      description: Returns available options for a volume
+      operationId: GetVolumeOptions
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolumeOptions'
+          description: VolumeOptions
+      tags:
+      - Volumes
+  /regions/:region/volumes/os-volumes:
+    get:
+      description: "Lists all OS Volumes, These volumes are bootable volumes which\
+        \ can be used to create an instance from a snapshot"
+      operationId: GetAllOSVolumes
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Volume'
+          description: Volume
+      tags:
+      - Volumes
+  /regions/:region/volumes/snapshots:
+    get:
+      description: Returns snapshots taken from user's volumes
+      operationId: GetVolumeSnapshots
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          $ref: '#/components/responses/VolumeSnapshots'
+      tags:
+      - Volumes
+  /regions/:region/volumes/snapshots/:id/create-volume:
+    post:
+      description: Create a volume from specified snapshot
+      operationId: CreateVolumeFromSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CreateVolumeFromSnapshotRequest'
+        description: new volume info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: ' invalid data provided'
+      tags:
+      - Volumes
+      x-codegen-request-body-name: CreateVolumeFromSnapshotRequest
+  /regions/:region/volumes/snapshots/:id/os-volume:
+    post:
+      description: "Creates an OS Volume from snapshot, which can later be used to\
+        \ boot up a new instance from that volume"
+      operationId: CreateOSVolumeFromSnapshot
+      parameters:
+      - description: region code
+        in: path
+        name: region
+        required: true
+        schema:
+          type: string
+      - description: snapshot id
+        in: path
+        name: id
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/CreateVolumeFromSnapshotRequest'
+        description: new volume info
+        required: true
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageResponse'
+          description: MessageResponse
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+          description: " provided data is invalid, or source disk is not bootable"
+      tags:
+      - Volumes
+      x-codegen-request-body-name: CreateVolumeFromSnapshotRequest
+components:
+  schemas:
+    AddServerPublicIPRequest:
+      example:
+        security_groups:
+        - security_groups
+        - security_groups
+        security_group: security_group
+      properties:
+        security_group:
+          type: string
+          x-go-name: SecurityGroupID
+        security_groups:
+          items:
+            type: string
+          type: array
+          x-go-name: SecurityGroupIDs
+      type: object
+      x-go-name: addIPReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    AllocationPool:
+      example:
+        start: start
+        end: end
+      properties:
+        end:
+          type: string
+          x-go-name: End
+        start:
+          type: string
+          x-go-name: Start
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    AttachPortSecurityRequest:
+      properties:
+        security_group_id:
+          type: string
+          x-go-name: SecurityGroupID
+      type: object
+      x-go-name: attachPortSecurityRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/port
+    AttachServerRootVolumeRequest:
+      example:
+        volume_id: volume_id
+      properties:
+        volume_id:
+          type: string
+          x-go-name: VolumeID
+      type: object
+      x-go-name: attachReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    AttachServerToNetworkRequest:
+      example:
+        enablePortSecurity: true
+        ip: ip
+        subnet_id: subnet_id
+        server_id: server_id
+      properties:
+        enablePortSecurity:
+          type: boolean
+          x-go-name: EnablePortSecurity
+        ip:
+          type: string
+          x-go-name: IP
+        server_id:
+          type: string
+          x-go-name: ServerID
+        subnet_id:
+          type: string
+          x-go-name: SubnetID
+      type: object
+      x-go-name: attachReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/network
+    AttachServerToSecurityGroupRequest:
+      example:
+        security_group_id: security_group_id
+      properties:
+        security_group_id:
+          type: string
+          x-go-name: GroupID
+      type: object
+      x-go-name: secGroup
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    AttachTagRequest:
+      example:
+        instance_id: instance_id
+        instance_type: instance_type
+      properties:
+        instance_id:
+          type: string
+          x-go-name: InstanceID
+        instance_type:
+          description: "describes the type of resource, values: `server`, `network`,\
+            \ `image`, `volume`, `float_ip`, `security_group`"
+          type: string
+          x-go-name: InstanceType
+      type: object
+      x-go-name: attachReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/tag
+    BatchTagRequest:
+      example:
+        tag_list:
+        - tag_list
+        - tag_list
+        instance_list:
+        - instance_list
+        - instance_list
+        instance_type: instance_type
+      properties:
+        instance_list:
+          items:
+            type: string
+          type: array
+          x-go-name: InstanceList
+        instance_type:
+          type: string
+          x-go-name: InstanceType
+        tag_list:
+          items:
+            type: string
+          type: array
+          x-go-name: TagList
+      type: object
+      x-go-name: batchReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/tag
+    Chart:
+      example:
+        series:
+        - data:
+          - 0.8008281904610115
+          - 0.8008281904610115
+          name: name
+        - data:
+          - 0.8008281904610115
+          - 0.8008281904610115
+          name: name
+        categories:
+        - categories
+        - categories
+        title: title
+      properties:
+        categories:
+          items:
+            type: string
+          type: array
+          x-go-name: Categories
+        series:
+          items:
+            $ref: '#/components/schemas/ChartDataset'
+          type: array
+          x-go-name: Series
+        title:
+          type: string
+          x-go-name: Title
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/reports
+    ChartCollection:
+      example:
+        disk:
+          series:
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          categories:
+          - categories
+          - categories
+          title: title
+        cpu:
+          series:
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          categories:
+          - categories
+          - categories
+          title: title
+        network:
+          series:
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          categories:
+          - categories
+          - categories
+          title: title
+        ram:
+          series:
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          - data:
+            - 0.8008281904610115
+            - 0.8008281904610115
+            name: name
+          categories:
+          - categories
+          - categories
+          title: title
+        statistics:
+        - statistics
+        - statistics
+      properties:
+        cpu:
+          $ref: '#/components/schemas/Chart'
+        disk:
+          $ref: '#/components/schemas/Chart'
+        network:
+          $ref: '#/components/schemas/Chart'
+        ram:
+          $ref: '#/components/schemas/Chart'
+        statistics:
+          items:
+            type: string
+          type: array
+          x-go-name: Statistics
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/reports
+    ChartDataset:
+      example:
+        data:
+        - 0.8008281904610115
+        - 0.8008281904610115
+        name: name
+      properties:
+        data:
+          items:
+            format: double
+            type: number
+          type: array
+          x-go-name: Data
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/reports
+    CreateFloatIPRequest:
+      example:
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+      type: object
+      x-go-name: createFloatIPReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/floatip
+    CreateImageFromSnapshotRequest:
+      properties:
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: createImageFromSnapshotRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    CreatePTRRequest:
+      example:
+        domain: domain
+        ip: ip
+      properties:
+        domain:
+          type: string
+          x-go-name: Domain
+        ip:
+          type: string
+          x-go-name: IP
+      type: object
+      x-go-name: createReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/ptr
+    CreatePrivateNetworkRequest:
+      example:
+        network_id: network_id
+        enable_dhcp: true
+        enable_gateway: true
+        name: name
+        description: description
+        subnet_id: subnet_id
+        subnet_gateway: subnet_gateway
+        subnet_ip: subnet_ip
+        dhcp: dhcp
+        dns_servers: dns_servers
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        dhcp:
+          type: string
+          x-go-name: DHCPRange
+        dns_servers:
+          type: string
+          x-go-name: DNSServers
+        enable_dhcp:
+          type: boolean
+          x-go-name: EnableDHCP
+        enable_gateway:
+          type: boolean
+          x-go-name: EnableGateway
+        name:
+          type: string
+          x-go-name: Name
+        network_id:
+          type: string
+          x-go-name: NetworkID
+        subnet_gateway:
+          type: string
+          x-go-name: SubnetGateway
+        subnet_id:
+          type: string
+          x-go-name: SubnetID
+        subnet_ip:
+          type: string
+          x-go-name: CIDR
+      type: object
+      x-go-name: createSubnetRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/subnet
+    CreateSSHKeyRequest:
+      example:
+        public_key: public_key
+        name: name
+      properties:
+        name:
+          type: string
+          x-go-name: Name
+        public_key:
+          type: string
+          x-go-name: PublicKey
+      type: object
+      x-go-name: createReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/sshkey
+    CreateSecurityGroupRequest:
+      example:
+        name: name
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: createReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/firewall
+    CreateSecurityGroupRuleRequest:
+      example:
+        protocol: protocol
+        description: description
+        port_to: "{}"
+        ips:
+        - ips
+        - ips
+        port_from: "{}"
+        direction: direction
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        direction:
+          description: "connection direction, either `ingress` or `egress`"
+          type: string
+          x-go-name: Direction
+        ips:
+          items:
+            type: string
+          type: array
+          x-go-name: IPs
+        port_from:
+          description: "starting port, ex. 443"
+          properties: {}
+          type: object
+          x-go-name: PortFrom
+        port_to:
+          description: "ending port, ex. 8080"
+          properties: {}
+          type: object
+          x-go-name: PortTo
+        protocol:
+          description: '`udp` or `tcp`'
+          type: string
+          x-go-name: Protocol
+      type: object
+      x-go-name: CreateRuleRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/firewall
+    CreateServerRequest:
+      example:
+        count: 0
+        create_type: create_type
+        disk_size: 6
+        os_volume_id: os_volume_id
+        is_sandbox: true
+        flavor_id: flavor_id
+        key_name: "{}"
+        server_volumes:
+        - size: 1
+          name: name
+          description: description
+        - size: 1
+          name: name
+          description: description
+        backup_id: backup_id
+        init_script: init_script
+        security_groups:
+        - name: name
+        - name: name
+        network_id: network_id
+        ha_enabled: true
+        name: name
+        ssh_key: true
+        image_id: image_id
+        network_ids:
+        - network_ids
+        - network_ids
+      properties:
+        backup_id:
+          type: string
+          x-go-name: BackupID
+        count:
+          format: int64
+          type: integer
+          x-go-name: Count
+        create_type:
+          type: string
+          x-go-name: CreateType
+        disk_size:
+          format: int64
+          type: integer
+          x-go-name: DiskSize
+        flavor_id:
+          type: string
+          x-go-name: FlavorID
+        ha_enabled:
+          type: boolean
+          x-go-name: HAEnabled
+        image_id:
+          type: string
+          x-go-name: ImageID
+        init_script:
+          type: string
+          x-go-name: InitScript
+        is_sandbox:
+          type: boolean
+          x-go-name: IsSandbox
+        key_name:
+          properties: {}
+          type: object
+          x-go-name: KeyName
+        name:
+          type: string
+          x-go-name: Name
+        network_id:
+          type: string
+          x-go-name: NetworkID
+        network_ids:
+          items:
+            type: string
+          type: array
+          x-go-name: NetworkIDs
+        os_volume_id:
+          type: string
+          x-go-name: OSVolumeID
+        security_groups:
+          items:
+            $ref: '#/components/schemas/securityGroupName'
+          type: array
+          x-go-name: SecurityGroups
+        server_volumes:
+          items:
+            $ref: '#/components/schemas/ServerVolume'
+          type: array
+          x-go-name: ServerVolumes
+        ssh_key:
+          type: boolean
+          x-go-name: SSHKey
+      type: object
+      x-go-name: createRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    CreateSnapshotFromVolumeRequest:
+      example:
+        name: name
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: createVolumeSnapshotRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    CreateTagRequest:
+      example:
+        tag_name: tag_name
+      properties:
+        tag_name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: createReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/tag
+    CreateVolumeFromSnapshotRequest:
+      example:
+        name: name
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: createVolumeFromSnapshotRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    CreateVolumeRequest:
+      example:
+        size: 0
+        name: name
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        name:
+          type: string
+          x-go-name: Name
+        size:
+          description: size of the disk in GB
+          format: int32
+          type: integer
+          x-go-name: Size
+      type: object
+      x-go-name: createVolRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    DeleteServerReasons:
+      example:
+        reasons:
+        - answer: answer
+          id: id
+        - answer: answer
+          id: id
+      properties:
+        reasons:
+          items:
+            $ref: '#/components/schemas/deleteServerReasonAnswer'
+          type: array
+          x-go-name: Reasons
+      type: object
+      x-go-name: deleteServerReasons
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    DetachFloatIPRequest:
+      example:
+        port_id: port_id
+      properties:
+        port_id:
+          type: string
+          x-go-name: PortID
+      type: object
+      x-go-name: detachReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/floatip
+    DetachNetworkFromServerRequest:
+      example:
+        server_id: server_id
+      properties:
+        server_id:
+          type: string
+          x-go-name: ServerId
+      type: object
+      x-go-name: serverIdBody
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/network
+    DetachPortSecurityRequest:
+      properties:
+        security_group_id:
+          type: string
+          x-go-name: SecurityGroupID
+      type: object
+      x-go-name: detachPortSecurityRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/port
+    DetachTagRequest:
+      example:
+        instance_id: instance_id
+        instance_type: instance_type
+      properties:
+        instance_id:
+          type: string
+          x-go-name: InstanceID
+        instance_type:
+          description: "describes the type of resource, values: `server`, `network`,\
+            \ `image`, `volume`, `float_ip`, `security_group`"
+          type: string
+          x-go-name: InstanceType
+      type: object
+      x-go-name: detachReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/tag
+    ErrorResponse:
+      properties:
+        errors:
+          items:
+            type: string
+          type: array
+          x-go-name: Errors
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+      x-go-name: errResp
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses
+    FloatIP:
+      example:
+        server:
+          image:
+            metadata:
+              key: metadata
+            os: os
+            documents:
+            - link: link
+              name: name
+            - link: link
+              name: name
+            created: created
+            min_disk: 5
+            os_version: os_version
+            size: 7
+            name: name
+            progress: 2
+            id: id
+            min_ram: 5
+            status: status
+            username: username
+          addresses:
+            key:
+            - mac_addr: mac_addr
+              is_public: true
+              addr: addr
+              type: type
+              version: version
+            - mac_addr: mac_addr
+              is_public: true
+              addr: addr
+              type: type
+              version: version
+          created: created
+          task_state: task_state
+          tags:
+          - name: name
+            id: id
+          - name: name
+            id: id
+          flavor:
+            disk: 0
+            swap: swap
+            name: name
+            id: id
+            vcpus: 1
+            ram: 6.027456183070403
+          key_name: key_name
+          security_groups:
+          - default: true
+            readonly: readonly
+            ip_addresses:
+            - ip_addresses
+            - ip_addresses
+            name: name
+            description: description
+            real_name: real_name
+            rules:
+            - port_end: 9
+              protocol: protocol
+              updated_at: updated_at
+              group_id: group_id
+              ether_type: ether_type
+              ip: ip
+              created_at: created_at
+              description: description
+              port_start: 3
+              id: id
+              direction: direction
+            - port_end: 9
+              protocol: protocol
+              updated_at: updated_at
+              group_id: group_id
+              ether_type: ether_type
+              ip: ip
+              created_at: created_at
+              description: description
+              port_start: 3
+              id: id
+              direction: direction
+            id: id
+          - default: true
+            readonly: readonly
+            ip_addresses:
+            - ip_addresses
+            - ip_addresses
+            name: name
+            description: description
+            real_name: real_name
+            rules:
+            - port_end: 9
+              protocol: protocol
+              updated_at: updated_at
+              group_id: group_id
+              ether_type: ether_type
+              ip: ip
+              created_at: created_at
+              description: description
+              port_start: 3
+              id: id
+              direction: direction
+            - port_end: 9
+              protocol: protocol
+              updated_at: updated_at
+              group_id: group_id
+              ether_type: ether_type
+              ip: ip
+              created_at: created_at
+              description: description
+              port_start: 3
+              id: id
+              direction: direction
+            id: id
+          ar_next: ar_next
+          password: password
+          ha_enabled: true
+          name: name
+          id: id
+          status: status
+        floating_network_id: floating_network_id
+        revision_number: revision_number
+        created_at: created_at
+        description: description
+        floating_ip_address: floating_ip_address
+        tags:
+        - tags
+        - tags
+        updated_at: updated_at
+        fixed_ip_address: fixed_ip_address
+        port_id: port_id
+        router_id: router_id
+        id: id
+        status: status
+      properties:
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        description:
+          type: string
+          x-go-name: Description
+        fixed_ip_address:
+          type: string
+          x-go-name: FixedIPAddress
+        floating_ip_address:
+          type: string
+          x-go-name: FloatingIPAddress
+        floating_network_id:
+          type: string
+          x-go-name: FloatingNetworkID
+        id:
+          type: string
+          x-go-name: ID
+        port_id:
+          type: string
+          x-go-name: PortID
+        revision_number:
+          type: string
+          x-go-name: RevisionNumber
+        router_id:
+          type: string
+          x-go-name: RouterID
+        server:
+          $ref: '#/components/schemas/ServerDetail'
+        status:
+          type: string
+          x-go-name: Status
+        tags:
+          items:
+            type: string
+          type: array
+          x-go-name: Tags
+        updated_at:
+          type: string
+          x-go-name: UpdatedAt
+      type: object
+      x-go-name: FloatIPResponse
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/floatip
+    FloatIPAttachRequest:
+      example:
+        port_id: port_id
+        subnet_id: subnet_id
+        server_id: server_id
+      properties:
+        port_id:
+          type: string
+          x-go-name: PortID
+        server_id:
+          type: string
+          x-go-name: ServerID
+        subnet_id:
+          type: string
+          x-go-name: SubnetID
+      type: object
+      x-go-name: attachReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/floatip
+    FullIP:
+      example:
+        port_security_enabled: true
+        security_groups:
+        - name: name
+          id: id
+        - name: name
+          id: id
+        public: true
+        float_ip: "{}"
+        mac_address: mac_address
+        ip: ip
+        port_id: port_id
+        subnet_id: subnet_id
+        subnet_name: subnet_name
+        version: version
+        ptr: "{}"
+      properties:
+        float_ip:
+          properties: {}
+          type: object
+          x-go-name: FloatIP
+        ip:
+          type: string
+          x-go-name: IP
+        mac_address:
+          type: string
+          x-go-name: MacAddress
+        port_id:
+          type: string
+          x-go-name: PortID
+        port_security_enabled:
+          type: boolean
+          x-go-name: PortSecurityEnabled
+        ptr:
+          properties: {}
+          type: object
+          x-go-name: PTR
+        public:
+          type: boolean
+          x-go-name: Public
+        security_groups:
+          items:
+            $ref: '#/components/schemas/PortSecGroupData'
+          type: array
+          x-go-name: SecurityGroups
+        subnet_id:
+          type: string
+          x-go-name: SubnetID
+        subnet_name:
+          type: string
+          x-go-name: SubnetName
+        version:
+          type: string
+          x-go-name: Version
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    GetServerActionsResponse:
+      example:
+        start_time: start_time
+        action: action
+        message: message
+      properties:
+        action:
+          type: string
+          x-go-name: Act
+        message:
+          type: string
+          x-go-name: Message
+        start_time:
+          type: string
+          x-go-name: StartTime
+      type: object
+      x-go-name: Action
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/server
+    GetServerVNCRequest:
+      example:
+        url: url
+      properties:
+        url:
+          type: string
+          x-go-name: URL
+      type: object
+      x-go-name: ConsoleResponse
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/server
+    GroupInstance:
+      properties:
+        id:
+          type: string
+          x-go-name: ID
+        ips:
+          items:
+            type: string
+          type: array
+          x-go-name: IPs
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/firewall
+    HostRoute:
+      example:
+        destination: destination
+        nexthop: nexthop
+      properties:
+        destination:
+          type: string
+          x-go-name: DestinationCIDR
+        nexthop:
+          type: string
+          x-go-name: NextHop
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    IPInfo:
+      example:
+        gateway_address: gateway_address
+        address: address
+        port_id: port_id
+        subnet_id: subnet_id
+        type: type
+      properties:
+        address:
+          type: string
+          x-go-name: Address
+        gateway_address:
+          type: string
+          x-go-name: GatewayAddress
+        port_id:
+          type: string
+          x-go-name: PortID
+        subnet_id:
+          type: string
+          x-go-name: SubnetID
+        type:
+          type: string
+          x-go-name: Type
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/floatip
+    ImageList:
+      example:
+        images:
+        - distribution_name: distribution_name
+          disk: 0
+          name: name
+          ssh_key: true
+          os_description: os_description
+          id: id
+          ssh_password: true
+          ram: 6
+        - distribution_name: distribution_name
+          disk: 0
+          name: name
+          ssh_key: true
+          os_description: os_description
+          id: id
+          ssh_password: true
+          ram: 6
+        display: true
+        name: name
+      properties:
+        display:
+          type: boolean
+          x-go-name: Display
+        images:
+          items:
+            $ref: '#/components/schemas/ImgDistributionItem'
+          type: array
+          x-go-name: Images
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: ImgListResponseItem
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/image
+    ImgDistributionItem:
+      example:
+        distribution_name: distribution_name
+        disk: 0
+        name: name
+        ssh_key: true
+        os_description: os_description
+        id: id
+        ssh_password: true
+        ram: 6
+      properties:
+        disk:
+          format: int64
+          type: integer
+          x-go-name: Disk
+        distribution_name:
+          type: string
+          x-go-name: DistroName
+        id:
+          type: string
+          x-go-name: ID
+        name:
+          type: string
+          x-go-name: Name
+        os_description:
+          type: string
+          x-go-name: OSDesc
+        ram:
+          format: int64
+          type: integer
+          x-go-name: Ram
+        ssh_key:
+          type: boolean
+          x-go-name: SSHKey
+        ssh_password:
+          type: boolean
+          x-go-name: SSHPassword
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/image
+    ImgDoc:
+      example:
+        link: link
+        name: name
+      properties:
+        link:
+          type: string
+          x-go-name: Link
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses
+    ImportImageRequest:
+      example:
+        minRam: 6
+        name: name
+        minDisk: 0
+        url: url
+      properties:
+        minDisk:
+          format: int64
+          type: integer
+          x-go-name: MinDisk
+        minRam:
+          format: int64
+          type: integer
+          x-go-name: MinRam
+        name:
+          type: string
+          x-go-name: Name
+        url:
+          type: string
+          x-go-name: URL
+      type: object
+      x-go-name: importRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/image
+    MessageResponse:
+      example:
+        message: message
+      properties:
+        message:
+          type: string
+          x-go-name: Message
+      type: object
+      x-go-name: msgResponse
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses
+    Network:
+      example:
+        tenant_id: tenant_id
+        port_security_enabled: true
+        shared: true
+        revision_number: 6
+        ipv4_address_scope: ipv4_address_scope
+        availability_zones:
+        - availability_zones
+        - availability_zones
+        created_at: created_at
+        description: description
+        mtu: 0
+        tags:
+        - tags
+        - tags
+        ipv6_address_scope: ipv6_address_scope
+        availability_zone_hints:
+        - availability_zone_hints
+        - availability_zone_hints
+        updated_at: updated_at
+        router:external: true
+        admin_state_up: true
+        name: name
+        qos_policy_id: qos_policy_id
+        subnets:
+        - tenant_id: tenant_id
+          enable_dhcp: true
+          ipv6_address_mode: ipv6_address_mode
+          subnetpool_id: subnetpool_id
+          revision_number: 1
+          ipv6_ra_mode: ipv6_ra_mode
+          description: description
+          allocation_pools:
+          - start: start
+            end: end
+          - start: start
+            end: end
+          dns_nameservers:
+          - dns_nameservers
+          - dns_nameservers
+          tags:
+          - tags
+          - tags
+          network_id: network_id
+          host_routes:
+          - destination: destination
+            nexthop: nexthop
+          - destination: destination
+            nexthop: nexthop
+          servers:
+          - security_groups:
+            - security_groups
+            - security_groups
+            addresses:
+              key:
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+            public_ip:
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            name: name
+            id: id
+            ips:
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+          - security_groups:
+            - security_groups
+            - security_groups
+            addresses:
+              key:
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+            public_ip:
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            name: name
+            id: id
+            ips:
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+          ip_version: ip_version
+          project_id: project_id
+          name: name
+          service_types:
+          - service_types
+          - service_types
+          cidr: cidr
+          gateway_ip: gateway_ip
+          id: id
+        - tenant_id: tenant_id
+          enable_dhcp: true
+          ipv6_address_mode: ipv6_address_mode
+          subnetpool_id: subnetpool_id
+          revision_number: 1
+          ipv6_ra_mode: ipv6_ra_mode
+          description: description
+          allocation_pools:
+          - start: start
+            end: end
+          - start: start
+            end: end
+          dns_nameservers:
+          - dns_nameservers
+          - dns_nameservers
+          tags:
+          - tags
+          - tags
+          network_id: network_id
+          host_routes:
+          - destination: destination
+            nexthop: nexthop
+          - destination: destination
+            nexthop: nexthop
+          servers:
+          - security_groups:
+            - security_groups
+            - security_groups
+            addresses:
+              key:
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+            public_ip:
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            name: name
+            id: id
+            ips:
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+          - security_groups:
+            - security_groups
+            - security_groups
+            addresses:
+              key:
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+              - mac_addr: mac_addr
+                is_public: true
+                addr: addr
+                type: type
+                version: version
+            public_ip:
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            - subnet_id: subnet_id
+              ip_address: ip_address
+            name: name
+            id: id
+            ips:
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+            - port_security_enabled: true
+              security_groups:
+              - name: name
+                id: id
+              - name: name
+                id: id
+              public: true
+              float_ip: "{}"
+              mac_address: mac_address
+              ip: ip
+              port_id: port_id
+              subnet_id: subnet_id
+              subnet_name: subnet_name
+              version: version
+              ptr: "{}"
+          ip_version: ip_version
+          project_id: project_id
+          name: name
+          service_types:
+          - service_types
+          - service_types
+          cidr: cidr
+          gateway_ip: gateway_ip
+          id: id
+        dhcp_ip: dhcp_ip
+        id: id
+        status: status
+      properties:
+        admin_state_up:
+          type: boolean
+          x-go-name: AdminStateUp
+        availability_zone_hints:
+          items:
+            type: string
+          type: array
+          x-go-name: AvailabilityZoneHints
+        availability_zones:
+          items:
+            type: string
+          type: array
+          x-go-name: AvailabilityZones
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        description:
+          type: string
+          x-go-name: Description
+        dhcp_ip:
+          type: string
+          x-go-name: DHCPIP
+        id:
+          type: string
+          x-go-name: ID
+        ipv4_address_scope:
+          type: string
+          x-go-name: IPV4AddressScope
+        ipv6_address_scope:
+          type: string
+          x-go-name: IPV6AddressScope
+        mtu:
+          format: int64
+          type: integer
+          x-go-name: MTU
+        name:
+          type: string
+          x-go-name: Name
+        port_security_enabled:
+          type: boolean
+          x-go-name: PortSecurityEnabled
+        qos_policy_id:
+          type: string
+          x-go-name: QOSPolicyID
+        revision_number:
+          format: int64
+          type: integer
+          x-go-name: ReviosionNumber
+        router:external:
+          type: boolean
+          x-go-name: RouterExternal
+        shared:
+          type: boolean
+          x-go-name: Shared
+        status:
+          type: string
+          x-go-name: Status
+        subnets:
+          items:
+            $ref: '#/components/schemas/Subnet'
+          type: array
+          x-go-name: Subnets
+        tags:
+          items:
+            type: string
+          type: array
+          x-go-name: Tags
+        tenant_id:
+          type: string
+          x-go-name: TenantID
+        updated_at:
+          type: string
+          x-go-name: UpdatedAt
+      type: object
+      x-go-name: NetworkResponse
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    NetworkServer:
+      example:
+        security_groups:
+        - security_groups
+        - security_groups
+        addresses:
+          key:
+          - mac_addr: mac_addr
+            is_public: true
+            addr: addr
+            type: type
+            version: version
+          - mac_addr: mac_addr
+            is_public: true
+            addr: addr
+            type: type
+            version: version
+        public_ip:
+        - subnet_id: subnet_id
+          ip_address: ip_address
+        - subnet_id: subnet_id
+          ip_address: ip_address
+        name: name
+        id: id
+        ips:
+        - port_security_enabled: true
+          security_groups:
+          - name: name
+            id: id
+          - name: name
+            id: id
+          public: true
+          float_ip: "{}"
+          mac_address: mac_address
+          ip: ip
+          port_id: port_id
+          subnet_id: subnet_id
+          subnet_name: subnet_name
+          version: version
+          ptr: "{}"
+        - port_security_enabled: true
+          security_groups:
+          - name: name
+            id: id
+          - name: name
+            id: id
+          public: true
+          float_ip: "{}"
+          mac_address: mac_address
+          ip: ip
+          port_id: port_id
+          subnet_id: subnet_id
+          subnet_name: subnet_name
+          version: version
+          ptr: "{}"
+      properties:
+        addresses:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/ServerAddress'
+            type: array
+          type: object
+          x-go-name: Addresses
+        id:
+          type: string
+          x-go-name: ID
+        ips:
+          items:
+            $ref: '#/components/schemas/FullIP'
+          type: array
+          x-go-name: IPs
+        name:
+          type: string
+          x-go-name: Name
+        public_ip:
+          items:
+            $ref: '#/components/schemas/PublicIP'
+          type: array
+          x-go-name: PublicIPs
+        security_groups:
+          items:
+            type: string
+          type: array
+          x-go-name: SecurityGroups
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    Plan:
+      example:
+        port_speed: 2.027123023002322
+        base_package: base_package
+        memory: 7.061401241503109
+        create_type: create_type
+        type: type
+        cpu_count: 6
+        disk_in_bytes: 5
+        subtype: subtype
+        outbound: 3
+        iops_max_ssd: 2
+        id: id
+        throughput: 1
+        cpu_share: cpu_share
+        order: order
+        generation: generation
+        canary: true
+        price_per_month: 1
+        price_per_hour: 7
+        bandwidth_in_bytes: 0
+        "off": "off"
+        disk: 1
+        pps:
+        - 4
+        - 4
+        name: name
+        memory_in_bytes: 9
+        iops_max_hdd: 5
+        off_percent: off_percent
+      properties:
+        bandwidth_in_bytes:
+          format: int64
+          type: integer
+          x-go-name: BandwidthInBytes
+        base_package:
+          type: string
+          x-go-name: BasePackage
+        canary:
+          type: boolean
+          x-go-name: Canary
+        cpu_count:
+          format: int64
+          type: integer
+          x-go-name: CPUCount
+        cpu_share:
+          type: string
+          x-go-name: CPUShare
+        create_type:
+          type: string
+          x-go-name: CreateType
+        disk:
+          format: int64
+          type: integer
+          x-go-name: Disk
+        disk_in_bytes:
+          format: int64
+          type: integer
+          x-go-name: DiskInBytes
+        generation:
+          type: string
+          x-go-name: Generation
+        id:
+          type: string
+          x-go-name: ID
+        iops_max_hdd:
+          format: int64
+          type: integer
+          x-go-name: IOPSMaxHDD
+        iops_max_ssd:
+          format: int64
+          type: integer
+          x-go-name: IOPSMaxSSD
+        memory:
+          format: double
+          type: number
+          x-go-name: Memory
+        memory_in_bytes:
+          format: int64
+          type: integer
+          x-go-name: MemoryInBytes
+        name:
+          type: string
+          x-go-name: Name
+        "off":
+          type: string
+          x-go-name: "Off"
+        off_percent:
+          type: string
+          x-go-name: OffPercent
+        order:
+          type: string
+          x-go-name: Order
+        outbound:
+          format: int64
+          type: integer
+          x-go-name: Outbound
+        port_speed:
+          format: double
+          type: number
+          x-go-name: PortSpeed
+        pps:
+          items:
+            format: int64
+            type: integer
+          type: array
+          x-go-name: PPS
+        price_per_hour:
+          format: int64
+          type: integer
+          x-go-name: PPH
+        price_per_month:
+          format: int64
+          type: integer
+          x-go-name: PPM
+        subtype:
+          type: string
+          x-go-name: SubType
+        throughput:
+          format: int64
+          type: integer
+          x-go-name: Throughput
+        type:
+          type: string
+          x-go-name: Type
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/flavor
+    PortSecGroupData:
+      example:
+        name: name
+        id: id
+      properties:
+        id:
+          type: string
+          x-go-name: ID
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/services/networks/models
+    PublicIP:
+      example:
+        subnet_id: subnet_id
+        ip_address: ip_address
+      properties:
+        ip_address:
+          type: string
+          x-go-name: IPAddress
+        subnet_id:
+          type: string
+          x-go-name: SubnetID
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    Quota:
+      example:
+        max_total_cores:
+          unlimited: true
+          value: 0
+        total_server_groups_used: 7
+        max_server_groups:
+          unlimited: true
+          value: 0
+        max_total_ram_size:
+          unlimited: true
+          value: 0
+        max_security_groups:
+          unlimited: true
+          value: 0
+        total_cores_used: 6
+        max_image_meta:
+          unlimited: true
+          value: 0
+        total_security_groups_used: 2
+        total_ram_used: 5
+        max_total_keypairs:
+          unlimited: true
+          value: 0
+        total_instances_used: 5
+        max_personality:
+          unlimited: true
+          value: 0
+        max_server_meta:
+          unlimited: true
+          value: 0
+        max_personality_size:
+          unlimited: true
+          value: 0
+        total_floating_ips_used: 1
+        max_total_instances:
+          unlimited: true
+          value: 0
+        max_server_group_members:
+          unlimited: true
+          value: 0
+        max_security_group_rules:
+          unlimited: true
+          value: 0
+        max_total_floating_ips:
+          unlimited: true
+          value: 0
+      properties:
+        max_image_meta:
+          $ref: '#/components/schemas/QuotaValue'
+        max_personality:
+          $ref: '#/components/schemas/QuotaValue'
+        max_personality_size:
+          $ref: '#/components/schemas/QuotaValue'
+        max_security_group_rules:
+          $ref: '#/components/schemas/QuotaValue'
+        max_security_groups:
+          $ref: '#/components/schemas/QuotaValue'
+        max_server_group_members:
+          $ref: '#/components/schemas/QuotaValue'
+        max_server_groups:
+          $ref: '#/components/schemas/QuotaValue'
+        max_server_meta:
+          $ref: '#/components/schemas/QuotaValue'
+        max_total_cores:
+          $ref: '#/components/schemas/QuotaValue'
+        max_total_floating_ips:
+          $ref: '#/components/schemas/QuotaValue'
+        max_total_instances:
+          $ref: '#/components/schemas/QuotaValue'
+        max_total_keypairs:
+          $ref: '#/components/schemas/QuotaValue'
+        max_total_ram_size:
+          $ref: '#/components/schemas/QuotaValue'
+        total_cores_used:
+          format: int64
+          type: integer
+          x-go-name: TotalCoresUsed
+        total_floating_ips_used:
+          format: int64
+          type: integer
+          x-go-name: TotalFloatingIPsUsed
+        total_instances_used:
+          format: int64
+          type: integer
+          x-go-name: TotalInstancesUsed
+        total_ram_used:
+          format: int64
+          type: integer
+          x-go-name: TotalRamUsed
+        total_security_groups_used:
+          format: int64
+          type: integer
+          x-go-name: TotalSecGroupsUsed
+        total_server_groups_used:
+          format: int64
+          type: integer
+          x-go-name: TotalServerGroupsUsed
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/quota
+    QuotaValue:
+      example:
+        unlimited: true
+        value: 0
+      properties:
+        unlimited:
+          type: boolean
+          x-go-name: Unlimited
+        value:
+          format: int64
+          type: integer
+          x-go-name: Value
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/quota
+    RebuildImageRequest:
+      example:
+        image_id: image_id
+      properties:
+        image_id:
+          type: string
+          x-go-name: ImageID
+      type: object
+      x-go-name: rebuildImg
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    Region:
+      properties:
+        beta:
+          type: boolean
+          x-go-name: Beta
+        city:
+          type: string
+          x-go-name: City
+        city_code:
+          type: string
+          x-go-name: CityCode
+        code:
+          type: string
+          x-go-name: Code
+        country:
+          type: string
+          x-go-name: Country
+        create:
+          type: boolean
+          x-go-name: Create
+        dc:
+          type: string
+          x-go-name: DC
+        dc_code:
+          type: string
+          x-go-name: DCCode
+        default:
+          type: boolean
+          x-go-name: Default
+        flag:
+          type: string
+          x-go-name: Flag
+        new:
+          type: boolean
+          x-go-name: New
+        region:
+          type: string
+          x-go-name: Region
+        soon:
+          type: boolean
+          x-go-name: Soon
+        visible:
+          type: boolean
+          x-go-name: Visible
+        volume_backed:
+          type: boolean
+          x-go-name: VolumeBacked
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/region
+    RegionServerCreateOptions:
+      example:
+        image_name: image_name
+        network_id: network_id
+        requires_payment_method: true
+        droplet_limit: 6
+        region_id: 1
+        currency: currency
+        droplet_count: 0
+        image_version: image_version
+      properties:
+        currency:
+          type: string
+          x-go-name: Currency
+        droplet_count:
+          format: int64
+          type: integer
+          x-go-name: DropletCount
+        droplet_limit:
+          format: int64
+          type: integer
+          x-go-name: DropletLimit
+        image_name:
+          type: string
+          x-go-name: ImageName
+        image_version:
+          type: string
+          x-go-name: ImageVersion
+        network_id:
+          type: string
+          x-go-name: NetworkID
+        region_id:
+          format: int64
+          type: integer
+          x-go-name: RegionID
+        requires_payment_method:
+          type: boolean
+          x-go-name: RequiresPaymentMethod
+      type: object
+      x-go-name: Options
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/server
+    RenameServerRequest:
+      example:
+        name: name
+      properties:
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: newName
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    RescueServerRequest:
+      example:
+        name: name
+      properties:
+        name:
+          description: The name of the rescue image
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: imgName
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    ResizeRootVolumeRequest:
+      example:
+        new_size: 0
+      properties:
+        new_size:
+          format: int64
+          type: integer
+          x-go-name: NewSize
+      type: object
+      x-go-name: resizeRootVolumeRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    ResizeServerRequest:
+      example:
+        flavor_id: flavor_id
+      properties:
+        flavor_id:
+          type: string
+          x-go-name: FlavorID
+      type: object
+      x-go-name: newFlavor
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    RevertSnapshotRequest:
+      example:
+        snapshot_id: snapshot_id
+      properties:
+        snapshot_id:
+          type: string
+          x-go-name: SnapshotID
+      type: object
+      x-go-name: revertVolumeRequest
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    Rule:
+      example:
+        port_end: 9
+        protocol: protocol
+        updated_at: updated_at
+        group_id: group_id
+        ether_type: ether_type
+        ip: ip
+        created_at: created_at
+        description: description
+        port_start: 3
+        id: id
+        direction: direction
+      properties:
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        description:
+          type: string
+          x-go-name: Description
+        direction:
+          type: string
+          x-go-name: Direction
+        ether_type:
+          type: string
+          x-go-name: EtherType
+        group_id:
+          type: string
+          x-go-name: GroupID
+        id:
+          type: string
+          x-go-name: ID
+        ip:
+          type: string
+          x-go-name: IP
+        port_end:
+          format: int32
+          type: integer
+          x-go-name: PortEnd
+        port_start:
+          format: int32
+          type: integer
+          x-go-name: PortStart
+        protocol:
+          type: string
+          x-go-name: Protocol
+        updated_at:
+          type: string
+          x-go-name: UpdatedAt
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/secgroup
+    SSHKey:
+      example:
+        public_key: public_key
+        fingerprint: fingerprint
+        name: name
+        created_at: created_at
+      properties:
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        fingerprint:
+          type: string
+          x-go-name: FingerPrint
+        name:
+          type: string
+          x-go-name: Name
+        public_key:
+          type: string
+          x-go-name: PublicKey
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/sshkey
+    SecurityGroup:
+      example:
+        default: true
+        readonly: readonly
+        ip_addresses:
+        - ip_addresses
+        - ip_addresses
+        name: name
+        description: description
+        real_name: real_name
+        rules:
+        - port_end: 9
+          protocol: protocol
+          updated_at: updated_at
+          group_id: group_id
+          ether_type: ether_type
+          ip: ip
+          created_at: created_at
+          description: description
+          port_start: 3
+          id: id
+          direction: direction
+        - port_end: 9
+          protocol: protocol
+          updated_at: updated_at
+          group_id: group_id
+          ether_type: ether_type
+          ip: ip
+          created_at: created_at
+          description: description
+          port_start: 3
+          id: id
+          direction: direction
+        id: id
+      properties:
+        default:
+          type: boolean
+          x-go-name: Default
+        description:
+          type: string
+          x-go-name: Description
+        id:
+          type: string
+          x-go-name: ID
+        ip_addresses:
+          items:
+            type: string
+          type: array
+          x-go-name: IPAddresses
+        name:
+          type: string
+          x-go-name: Name
+        readonly:
+          type: string
+          x-go-name: ReadOnly
+        real_name:
+          type: string
+          x-go-name: RealName
+        rules:
+          items:
+            $ref: '#/components/schemas/Rule'
+          type: array
+          x-go-name: Rules
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/secgroup
+    SecurityGroupRule:
+      properties:
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        description:
+          type: string
+          x-go-name: Description
+        direction:
+          type: string
+          x-go-name: Direction
+        ether_type:
+          type: string
+          x-go-name: EtherType
+        group_id:
+          type: string
+          x-go-name: GroupID
+        id:
+          type: string
+          x-go-name: ID
+        ip:
+          type: string
+          x-go-name: IP
+        port_end:
+          format: int64
+          type: integer
+          x-go-name: PortEnd
+        port_start:
+          format: int64
+          type: integer
+          x-go-name: PortStart
+        protocol:
+          type: string
+          x-go-name: Protocol
+        updated_at:
+          type: string
+          x-go-name: UpdatedAt
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/firewall
+    ServerAddress:
+      example:
+        mac_addr: mac_addr
+        is_public: true
+        addr: addr
+        type: type
+        version: version
+      properties:
+        addr:
+          type: string
+          x-go-name: Addr
+        is_public:
+          type: boolean
+          x-go-name: IsPublic
+        mac_addr:
+          type: string
+          x-go-name: MAC
+        type:
+          type: string
+          x-go-name: Type
+        version:
+          type: string
+          x-go-name: Version
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/server
+    ServerDetail:
+      example:
+        image:
+          metadata:
+            key: metadata
+          os: os
+          documents:
+          - link: link
+            name: name
+          - link: link
+            name: name
+          created: created
+          min_disk: 5
+          os_version: os_version
+          size: 7
+          name: name
+          progress: 2
+          id: id
+          min_ram: 5
+          status: status
+          username: username
+        addresses:
+          key:
+          - mac_addr: mac_addr
+            is_public: true
+            addr: addr
+            type: type
+            version: version
+          - mac_addr: mac_addr
+            is_public: true
+            addr: addr
+            type: type
+            version: version
+        created: created
+        task_state: task_state
+        tags:
+        - name: name
+          id: id
+        - name: name
+          id: id
+        flavor:
+          disk: 0
+          swap: swap
+          name: name
+          id: id
+          vcpus: 1
+          ram: 6.027456183070403
+        key_name: key_name
+        security_groups:
+        - default: true
+          readonly: readonly
+          ip_addresses:
+          - ip_addresses
+          - ip_addresses
+          name: name
+          description: description
+          real_name: real_name
+          rules:
+          - port_end: 9
+            protocol: protocol
+            updated_at: updated_at
+            group_id: group_id
+            ether_type: ether_type
+            ip: ip
+            created_at: created_at
+            description: description
+            port_start: 3
+            id: id
+            direction: direction
+          - port_end: 9
+            protocol: protocol
+            updated_at: updated_at
+            group_id: group_id
+            ether_type: ether_type
+            ip: ip
+            created_at: created_at
+            description: description
+            port_start: 3
+            id: id
+            direction: direction
+          id: id
+        - default: true
+          readonly: readonly
+          ip_addresses:
+          - ip_addresses
+          - ip_addresses
+          name: name
+          description: description
+          real_name: real_name
+          rules:
+          - port_end: 9
+            protocol: protocol
+            updated_at: updated_at
+            group_id: group_id
+            ether_type: ether_type
+            ip: ip
+            created_at: created_at
+            description: description
+            port_start: 3
+            id: id
+            direction: direction
+          - port_end: 9
+            protocol: protocol
+            updated_at: updated_at
+            group_id: group_id
+            ether_type: ether_type
+            ip: ip
+            created_at: created_at
+            description: description
+            port_start: 3
+            id: id
+            direction: direction
+          id: id
+        ar_next: ar_next
+        password: password
+        ha_enabled: true
+        name: name
+        id: id
+        status: status
+      properties:
+        addresses:
+          additionalProperties:
+            items:
+              $ref: '#/components/schemas/ServerAddress'
+            type: array
+          type: object
+          x-go-name: Addresses
+        ar_next:
+          type: string
+          x-go-name: ArNext
+        created:
+          type: string
+          x-go-name: Created
+        flavor:
+          $ref: '#/components/schemas/ServerFlavor'
+        ha_enabled:
+          type: boolean
+          x-go-name: HAEnabled
+        id:
+          type: string
+          x-go-name: ID
+        image:
+          $ref: '#/components/schemas/ServerImage'
+        key_name:
+          type: string
+          x-go-name: KeyName
+        name:
+          type: string
+          x-go-name: Name
+        password:
+          type: string
+          x-go-name: Password
+        security_groups:
+          items:
+            $ref: '#/components/schemas/SecurityGroup'
+          type: array
+          x-go-name: SecurityGroups
+        status:
+          type: string
+          x-go-name: Status
+        tags:
+          items:
+            $ref: '#/components/schemas/Tag'
+          type: array
+          x-go-name: Tags
+        task_state:
+          type: string
+          x-go-name: TaskState
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/server
+    ServerFlavor:
+      example:
+        disk: 0
+        swap: swap
+        name: name
+        id: id
+        vcpus: 1
+        ram: 6.027456183070403
+      properties:
+        disk:
+          format: int32
+          type: integer
+          x-go-name: Disk
+        id:
+          type: string
+          x-go-name: ID
+        name:
+          type: string
+          x-go-name: Name
+        ram:
+          format: double
+          type: number
+          x-go-name: RAM
+        swap:
+          type: string
+          x-go-name: Swap
+        vcpus:
+          format: int32
+          type: integer
+          x-go-name: VCPUs
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/flavor
+    ServerIPInfo:
+      example:
+        ip_data:
+        - gateway_address: gateway_address
+          address: address
+          port_id: port_id
+          subnet_id: subnet_id
+          type: type
+        - gateway_address: gateway_address
+          address: address
+          port_id: port_id
+          subnet_id: subnet_id
+          type: type
+        name: name
+        creation_date: creation_date
+        id: id
+        has_public_ip: true
+        status: status
+      properties:
+        creation_date:
+          type: string
+          x-go-name: CreationDate
+        has_public_ip:
+          type: boolean
+          x-go-name: HasPublicIP
+        id:
+          type: string
+          x-go-name: ID
+        ip_data:
+          items:
+            $ref: '#/components/schemas/IPInfo'
+          type: array
+          x-go-name: IPData
+        name:
+          type: string
+          x-go-name: Name
+        status:
+          type: string
+          x-go-name: Status
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/floatip
+    ServerImage:
+      example:
+        metadata:
+          key: metadata
+        os: os
+        documents:
+        - link: link
+          name: name
+        - link: link
+          name: name
+        created: created
+        min_disk: 5
+        os_version: os_version
+        size: 7
+        name: name
+        progress: 2
+        id: id
+        min_ram: 5
+        status: status
+        username: username
+      properties:
+        created:
+          type: string
+          x-go-name: Created
+        documents:
+          items:
+            $ref: '#/components/schemas/ImgDoc'
+          type: array
+          x-go-name: Documents
+        id:
+          type: string
+          x-go-name: ID
+        metadata:
+          additionalProperties:
+            type: string
+          type: object
+          x-go-name: MetaData
+        min_disk:
+          format: int32
+          type: integer
+          x-go-name: MinDisk
+        min_ram:
+          format: int32
+          type: integer
+          x-go-name: MinRam
+        name:
+          type: string
+          x-go-name: Name
+        os:
+          type: string
+          x-go-name: OS
+        os_version:
+          type: string
+          x-go-name: OSVersion
+        progress:
+          format: int32
+          type: integer
+          x-go-name: Progress
+        size:
+          format: int64
+          type: integer
+          x-go-name: Size
+        status:
+          type: string
+          x-go-name: Status
+        username:
+          type: string
+          x-go-name: UserName
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/image
+    ServerReports:
+      example:
+        charts:
+          disk:
+            series:
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            categories:
+            - categories
+            - categories
+            title: title
+          cpu:
+            series:
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            categories:
+            - categories
+            - categories
+            title: title
+          network:
+            series:
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            categories:
+            - categories
+            - categories
+            title: title
+          ram:
+            series:
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            - data:
+              - 0.8008281904610115
+              - 0.8008281904610115
+              name: name
+            categories:
+            - categories
+            - categories
+            title: title
+          statistics:
+          - statistics
+          - statistics
+      properties:
+        charts:
+          $ref: '#/components/schemas/ChartCollection'
+      type: object
+      x-go-name: ChartResult
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/reports
+    ServerVolume:
+      example:
+        size: 1
+        name: name
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        name:
+          type: string
+          x-go-name: Name
+        size:
+          format: int32
+          type: integer
+          x-go-name: Size
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    SinglePlan:
+      example:
+        port_speed: 7.061401241503109
+        base_package: base_package
+        memory: 2.3021358869347655
+        price_per_month: 2
+        swap: swap
+        price_per_hour: 3
+        create_type: create_type
+        type: type
+        bandwidth_in_bytes: 0
+        "off": "off"
+        cpu_count: 6
+        disk: 1
+        pps:
+        - 9
+        - 9
+        subtype: subtype
+        name: name
+        iops_max_ssd: 5
+        id: id
+        throughput: 4
+        cpu_share: cpu_share
+        iops_max_hdd: 5
+        off_percent: off_percent
+      properties:
+        bandwidth_in_bytes:
+          format: int64
+          type: integer
+          x-go-name: BandwidthInBytes
+        base_package:
+          type: string
+          x-go-name: BasePackage
+        cpu_count:
+          format: int64
+          type: integer
+          x-go-name: CPUCount
+        cpu_share:
+          type: string
+          x-go-name: CPUShare
+        create_type:
+          type: string
+          x-go-name: CreateType
+        disk:
+          format: int64
+          type: integer
+          x-go-name: Disk
+        id:
+          type: string
+          x-go-name: ID
+        iops_max_hdd:
+          format: int64
+          type: integer
+          x-go-name: IOPSMaxHDD
+        iops_max_ssd:
+          format: int64
+          type: integer
+          x-go-name: IOPSMaxSSD
+        memory:
+          format: double
+          type: number
+          x-go-name: Memory
+        name:
+          type: string
+          x-go-name: Name
+        "off":
+          type: string
+          x-go-name: "Off"
+        off_percent:
+          type: string
+          x-go-name: OffPercent
+        port_speed:
+          format: double
+          type: number
+          x-go-name: PortSpeed
+        pps:
+          items:
+            format: int64
+            type: integer
+          type: array
+          x-go-name: PPS
+        price_per_hour:
+          format: int64
+          type: integer
+          x-go-name: PPH
+        price_per_month:
+          format: int64
+          type: integer
+          x-go-name: PPM
+        subtype:
+          type: string
+          x-go-name: SubType
+        swap:
+          type: string
+          x-go-name: Swap
+        throughput:
+          format: int64
+          type: integer
+          x-go-name: Throughput
+        type:
+          type: string
+          x-go-name: Type
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/flavor
+    SnapshotCreateRequest:
+      example:
+        name: name
+      properties:
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: reqBody
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    SnapshotType:
+      type: string
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    Subnet:
+      example:
+        tenant_id: tenant_id
+        enable_dhcp: true
+        ipv6_address_mode: ipv6_address_mode
+        subnetpool_id: subnetpool_id
+        revision_number: 1
+        ipv6_ra_mode: ipv6_ra_mode
+        description: description
+        allocation_pools:
+        - start: start
+          end: end
+        - start: start
+          end: end
+        dns_nameservers:
+        - dns_nameservers
+        - dns_nameservers
+        tags:
+        - tags
+        - tags
+        network_id: network_id
+        host_routes:
+        - destination: destination
+          nexthop: nexthop
+        - destination: destination
+          nexthop: nexthop
+        servers:
+        - security_groups:
+          - security_groups
+          - security_groups
+          addresses:
+            key:
+            - mac_addr: mac_addr
+              is_public: true
+              addr: addr
+              type: type
+              version: version
+            - mac_addr: mac_addr
+              is_public: true
+              addr: addr
+              type: type
+              version: version
+          public_ip:
+          - subnet_id: subnet_id
+            ip_address: ip_address
+          - subnet_id: subnet_id
+            ip_address: ip_address
+          name: name
+          id: id
+          ips:
+          - port_security_enabled: true
+            security_groups:
+            - name: name
+              id: id
+            - name: name
+              id: id
+            public: true
+            float_ip: "{}"
+            mac_address: mac_address
+            ip: ip
+            port_id: port_id
+            subnet_id: subnet_id
+            subnet_name: subnet_name
+            version: version
+            ptr: "{}"
+          - port_security_enabled: true
+            security_groups:
+            - name: name
+              id: id
+            - name: name
+              id: id
+            public: true
+            float_ip: "{}"
+            mac_address: mac_address
+            ip: ip
+            port_id: port_id
+            subnet_id: subnet_id
+            subnet_name: subnet_name
+            version: version
+            ptr: "{}"
+        - security_groups:
+          - security_groups
+          - security_groups
+          addresses:
+            key:
+            - mac_addr: mac_addr
+              is_public: true
+              addr: addr
+              type: type
+              version: version
+            - mac_addr: mac_addr
+              is_public: true
+              addr: addr
+              type: type
+              version: version
+          public_ip:
+          - subnet_id: subnet_id
+            ip_address: ip_address
+          - subnet_id: subnet_id
+            ip_address: ip_address
+          name: name
+          id: id
+          ips:
+          - port_security_enabled: true
+            security_groups:
+            - name: name
+              id: id
+            - name: name
+              id: id
+            public: true
+            float_ip: "{}"
+            mac_address: mac_address
+            ip: ip
+            port_id: port_id
+            subnet_id: subnet_id
+            subnet_name: subnet_name
+            version: version
+            ptr: "{}"
+          - port_security_enabled: true
+            security_groups:
+            - name: name
+              id: id
+            - name: name
+              id: id
+            public: true
+            float_ip: "{}"
+            mac_address: mac_address
+            ip: ip
+            port_id: port_id
+            subnet_id: subnet_id
+            subnet_name: subnet_name
+            version: version
+            ptr: "{}"
+        ip_version: ip_version
+        project_id: project_id
+        name: name
+        service_types:
+        - service_types
+        - service_types
+        cidr: cidr
+        gateway_ip: gateway_ip
+        id: id
+      properties:
+        allocation_pools:
+          description: |-
+            Sub-ranges of CIDR available for dynamic allocation to ports.
+            See AllocationPool.
+          items:
+            $ref: '#/components/schemas/AllocationPool'
+          type: array
+          x-go-name: AllocationPools
+        cidr:
+          description: "CIDR representing IP range for this subnet, based on IP version."
+          type: string
+          x-go-name: CIDR
+        description:
+          description: Description for the subnet.
+          type: string
+          x-go-name: Description
+        dns_nameservers:
+          description: DNS name servers used by hosts in this subnet.
+          items:
+            type: string
+          type: array
+          x-go-name: DNSNameservers
+        enable_dhcp:
+          description: Specifies whether DHCP is enabled for this subnet or not.
+          type: boolean
+          x-go-name: EnableDHCP
+        gateway_ip:
+          description: Default gateway used by devices in this subnet.
+          type: string
+          x-go-name: GatewayIP
+        host_routes:
+          description: |-
+            Routes that should be used by devices with IPs from this subnet
+            (not including local subnet route).
+          items:
+            $ref: '#/components/schemas/HostRoute'
+          type: array
+          x-go-name: HostRoutes
+        id:
+          type: string
+          x-go-name: ID
+        ip_version:
+          description: "IP version, either `4' or `6'."
+          type: string
+          x-go-name: IPVersion
+        ipv6_address_mode:
+          description: The IPv6 address modes specifies mechanisms for assigning IPv6
+            IP addresses.
+          type: string
+          x-go-name: IPv6AddressMode
+        ipv6_ra_mode:
+          description: |-
+            The IPv6 router advertisement specifies whether the networking service
+            should transmit ICMPv6 packets.
+          type: string
+          x-go-name: IPv6RAMode
+        name:
+          description: Human-readable name for the subnet. Might not be unique.
+          type: string
+          x-go-name: Name
+        network_id:
+          description: UUID of the parent network.
+          type: string
+          x-go-name: NetworkID
+        project_id:
+          description: ProjectID is the project owner of the subnet.
+          type: string
+          x-go-name: ProjectID
+        revision_number:
+          format: int64
+          type: integer
+          x-go-name: RevisionNumber
+        servers:
+          items:
+            $ref: '#/components/schemas/NetworkServer'
+          type: array
+          x-go-name: Servers
+        service_types:
+          items:
+            type: string
+          type: array
+          x-go-name: ServiceType
+        subnetpool_id:
+          description: SubnetPoolID is the id of the subnet pool associated with the
+            subnet.
+          type: string
+          x-go-name: SubnetPoolID
+        tags:
+          items:
+            type: string
+          type: array
+          x-go-name: Tags
+        tenant_id:
+          description: TenantID is the project owner of the subnet.
+          type: string
+          x-go-name: TenantID
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses/networks
+    Tag:
+      example:
+        name: name
+        id: id
+      properties:
+        id:
+          type: string
+          x-go-name: ID
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: Tags
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/responses
+    UpdateTagRequest:
+      example:
+        tag_name: tag_name
+      properties:
+        tag_name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: updateReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/tag
+    UpdateVolumeRequest:
+      example:
+        name: name
+        description: description
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-name: updateReq
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    UpdateVolumeSnapshotRequest:
+      example:
+        instance_name: instance_name
+        name: name
+        description: description
+        volume_name: volume_name
+      properties:
+        description:
+          type: string
+          x-go-name: Description
+        instance_name:
+          type: string
+          x-go-name: InstanceName
+        name:
+          type: string
+          x-go-name: Name
+        volume_name:
+          type: string
+          x-go-name: VolumeName
+      type: object
+      x-go-name: updateVolumeSnapshot
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    Volume:
+      example:
+        attachments:
+        - server_name: server_name
+          volume_id: volume_id
+          attachment_id: attachment_id
+          id: id
+          attached_at: attached_at
+          server_id: server_id
+          device: device
+          host_name: host_name
+        - server_name: server_name
+          volume_id: volume_id
+          attachment_id: attachment_id
+          id: id
+          attached_at: attached_at
+          server_id: server_id
+          device: device
+          host_name: host_name
+        size: 0
+        snapshot_id: snapshot_id
+        name: name
+        volume_type_name: volume_type_name
+        created_at: created_at
+        description: description
+        id: id
+        bootable: bootable
+        source_volume_id: source_volume_id
+        status: status
+      properties:
+        attachments:
+          items:
+            $ref: '#/components/schemas/attachment'
+          type: array
+          x-go-name: Attachments
+        bootable:
+          type: string
+          x-go-name: Bootable
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        description:
+          type: string
+          x-go-name: Description
+        id:
+          type: string
+          x-go-name: ID
+        name:
+          type: string
+          x-go-name: Name
+        size:
+          format: int32
+          type: integer
+          x-go-name: Size
+        snapshot_id:
+          type: string
+          x-go-name: SnapshotID
+        source_volume_id:
+          type: string
+          x-go-name: SourceVolumeID
+        status:
+          type: string
+          x-go-name: Status
+        volume_type_name:
+          type: string
+          x-go-name: VolumeTypeName
+      type: object
+      x-go-name: httpVolume
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    VolumeAttachDetachRequest:
+      example:
+        volume_id: volume_id
+        server_id: server_id
+      properties:
+        server_id:
+          type: string
+          x-go-name: ServerID
+        volume_id:
+          type: string
+          x-go-name: VolumeID
+      type: object
+      x-go-name: volumeAttachDetach
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    VolumeLimits:
+      example:
+        max_total_backup_gigabytes: 0
+        total_snapshots_used: 3
+        max_total_volume_gigabytes: 5
+        total_backup_gigabytes_used: 2
+        max_total_volumes: 5
+        total_gigabytes_used: 9
+        max_total_backups: 6
+        max_total_snapshots: 1
+        total_backups_used: 7
+        total_volumes_used: 2
+      properties:
+        max_total_backup_gigabytes:
+          format: int32
+          type: integer
+          x-go-name: MaxTotalBackupsGBs
+        max_total_backups:
+          format: int32
+          type: integer
+          x-go-name: MaxTotalBackups
+        max_total_snapshots:
+          format: int32
+          type: integer
+          x-go-name: MaxTotalSnapshots
+        max_total_volume_gigabytes:
+          format: int32
+          type: integer
+          x-go-name: MaxTotalVolumesGBs
+        max_total_volumes:
+          format: int32
+          type: integer
+          x-go-name: MaxTotalVolumes
+        total_backup_gigabytes_used:
+          format: int32
+          type: integer
+          x-go-name: TotalBackupUsedGBs
+        total_backups_used:
+          format: int32
+          type: integer
+          x-go-name: TotalBackupsUsed
+        total_gigabytes_used:
+          format: int32
+          type: integer
+          x-go-name: TotalGBsUsed
+        total_snapshots_used:
+          format: int32
+          type: integer
+          x-go-name: TotalSnapshotsUsed
+        total_volumes_used:
+          format: int32
+          type: integer
+          x-go-name: TotalVolumesUsed
+      type: object
+      x-go-name: volumeLimits
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    VolumeOptions:
+      example:
+        throughput_sec_min:
+          ssd: 6
+          hdd: 0
+        iops_per_gig:
+          ssd: 6
+          hdd: 0
+        throughput_kb_per_gig:
+          ssd: 6
+          hdd: 0
+        throughput_sec_max:
+          ssd: ssd
+          hdd: hdd
+        iops_sec_max:
+          ssd: ssd
+          hdd: hdd
+      properties:
+        iops_per_gig:
+          $ref: '#/components/schemas/iOPSAndThroughput'
+        iops_sec_max:
+          $ref: '#/components/schemas/maxIOPSAndThroughput'
+        throughput_kb_per_gig:
+          $ref: '#/components/schemas/iOPSAndThroughput'
+        throughput_sec_max:
+          $ref: '#/components/schemas/maxIOPSAndThroughput'
+        throughput_sec_min:
+          $ref: '#/components/schemas/iOPSAndThroughput'
+      type: object
+      x-go-name: volumeOptions
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    VolumeSnapshot:
+      example:
+        real_size_status: true
+        server_name: server_name
+        volume_id: volume_id
+        created_at: created_at
+        description: description
+        volume_name: volume_name
+        real_size: 0
+        server_id: server_id
+        type: type
+        reverted_on: reverted_on
+        size: 6
+        name: name
+        id: id
+        image_id: image_id
+        status: status
+      properties:
+        created_at:
+          type: string
+          x-go-name: CreatedAt
+        description:
+          type: string
+          x-go-name: Description
+        id:
+          type: string
+          x-go-name: ID
+        image_id:
+          type: string
+          x-go-name: ImageID
+        name:
+          type: string
+          x-go-name: Name
+        real_size:
+          format: int64
+          type: integer
+          x-go-name: RealSize
+        real_size_status:
+          type: boolean
+          x-go-name: RealSizeAvailable
+        reverted_on:
+          type: string
+          x-go-name: RevertedOn
+        server_id:
+          type: string
+          x-go-name: ServerID
+        server_name:
+          type: string
+          x-go-name: ServerName
+        size:
+          format: int32
+          type: integer
+          x-go-name: Size
+        status:
+          type: string
+          x-go-name: Status
+        type:
+          type: string
+          x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+        volume_id:
+          type: string
+          x-go-name: VolumeID
+        volume_name:
+          type: string
+          x-go-name: VolumeName
+      type: object
+      x-go-name: volumeSnapshot
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/snapshot
+    attachment:
+      example:
+        server_name: server_name
+        volume_id: volume_id
+        attachment_id: attachment_id
+        id: id
+        attached_at: attached_at
+        server_id: server_id
+        device: device
+        host_name: host_name
+      properties:
+        attached_at:
+          type: string
+          x-go-name: AttachedAt
+        attachment_id:
+          type: string
+          x-go-name: AttachmentID
+        device:
+          type: string
+          x-go-name: Device
+        host_name:
+          type: string
+          x-go-name: HostName
+        id:
+          type: string
+          x-go-name: ID
+        server_id:
+          type: string
+          x-go-name: ServerID
+        server_name:
+          type: string
+          x-go-name: ServerName
+        volume_id:
+          type: string
+          x-go-name: VolumeID
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    deleteServerReasonAnswer:
+      example:
+        answer: answer
+        id: id
+      properties:
+        answer:
+          type: string
+          x-go-name: Answer
+        id:
+          type: string
+          x-go-name: ID
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+    iOPSAndThroughput:
+      example:
+        ssd: 6
+        hdd: 0
+      properties:
+        hdd:
+          format: int64
+          type: integer
+          x-go-name: HDD
+        ssd:
+          format: int64
+          type: integer
+          x-go-name: SSD
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    maxIOPSAndThroughput:
+      example:
+        ssd: ssd
+        hdd: hdd
+      properties:
+        hdd:
+          type: string
+          x-go-name: HDD
+        ssd:
+          type: string
+          x-go-name: SSD
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/volume
+    securityGroupName:
+      example:
+        name: name
+      properties:
+        name:
+          type: string
+          x-go-name: Name
+      type: object
+      x-go-package: git.arvaninternal.ir/iaas/interface/os-gateway/pkg/ui/controllers/abrak
+  securitySchemes:
+    key:
+      description: An API key that is aqquired from MachineUser menu in ArvanCloud's
+        panel
+      in: header
+      name: Apikey
+      type: apiKey
+x-original-swagger-version: "2.0"

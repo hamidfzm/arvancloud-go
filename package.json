@@ -4,7 +4,7 @@
   "author": "Hamid FzM <hamidfzm@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "build-live": "openapi-generator-cli generate -i https://www.arvancloud.ir/api-docs/live-2.0.json --skip-validate-spec -g go -o ./live",
+    "build-live": "openapi-generator-cli generate",
     "build": "yarn build-live"
   },
   "dependencies": {

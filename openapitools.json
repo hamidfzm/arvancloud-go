@@ -2,6 +2,121 @@
   "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
   "spaces": 2,
   "generator-cli": {
-    "version": "7.0.0"
+    "version": "7.0.0",
+    "generators": {
+      "cdn": {
+        "generatorName": "go",
+        "output": "./cdn",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/cdn-4.0.yml",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "packageName": "cdn",
+          "packageVersion": "4.0"
+        }
+      },
+      "live": {
+        "generatorName": "go",
+        "output": "./live",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/live-2.0.json",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "packageName": "live",
+          "packageVersion": "2.0"
+        }
+      },
+      "vads": {
+        "generatorName": "go",
+        "output": "./vads",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/vads-2.0.json",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "packageName": "vads",
+          "packageVersion": "2.0"
+        }
+      },
+      "vod": {
+        "generatorName": "go",
+        "output": "./vod",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/vod-2.0.json",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "packageName": "vod",
+          "packageVersion": "2.0"
+        }
+      },
+      "iaas": {
+        "generatorName": "go",
+        "output": "./iaas",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/iaas-1.0.json",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "structPrefix": true,
+          "packageName": "iaas",
+          "packageVersion": "1.0"
+        }
+      },
+      "storage": {
+        "generatorName": "go",
+        "output": "./storage",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/storage-1.1.yml",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "packageName": "storage",
+          "packageVersion": "1.1"
+        }
+      },
+      "paas": {
+        "generatorName": "go",
+        "output": "./paas",
+        "inputSpec": "https://www.arvancloud.ir/api-docs/paas-1.11.json",
+        "gitHost": "github.com",
+        "gitUserId": "hamidfzm",
+        "gitRepoId": "arvancloud-go",
+        "skipValidateSpec": true,
+        "httpUserAgent": "arvancloud-go/1.0.0",
+        "additionalProperties": {
+          "isGoSubmodule": true,
+          "enumClassPrefix": true,
+          "packageName": "paas",
+          "packageVersion": "1.1"
+        }
+      }
+    }
   }
 }

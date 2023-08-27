@@ -1,0 +1,1245 @@
+openapi: 3.0.1
+info:
+  title: Arvan LIVE
+  version: "2.0"
+  x-logo:
+    url: /images/other/arvan-api-docs-logo.svg
+    backgroundColor: white
+    altText: arvancloud
+servers:
+- url: https://napi.arvancloud.ir/live/2.0
+paths:
+  /analytics/play-count:
+    get:
+      description: |-
+        Interval constraint
+                                - Max 'daily' : 30d
+                                - Max 'hourly' : 2d
+                                - Max 'minutely' : 2h
+                                <br/>
+                                Period constraint
+                                - Max : 30d
+                                <br/>
+                                Since and until constraint
+                                - Max of date format : 30d
+                                - Max of date-time format : 2d
+                                - The format of both should be the same either as date-time or as date.
+                                <br/>
+                                Aggregate constraint
+                                - It should be used with group_by or interval.
+      parameters:
+      - description: "Enum: '1h' '2h' '3h' '6h' '12h' '24h' '3d' '7d' '14d' '1m' "
+        in: query
+        name: Period
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: since
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: until
+        schema:
+          type: string
+      - description: "Enum: 'minutely' 'hourly' 'daily'"
+        in: query
+        name: interval
+        schema:
+          type: string
+      - description: "Enum: watch_time"
+        in: query
+        name: order_by.name
+        schema:
+          type: string
+      - description: "Enum: 'ASC' 'DESC'"
+        in: query
+        name: order_by.order
+        schema:
+          type: string
+      - description: "Enum: 'channel' 'video' 'country' 'asn'"
+        in: query
+        name: group_by
+        schema:
+          type: string
+      - description: Limit the number of entities
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Define offset of entities
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: "Enum: 'SUM' 'AVG' 'MIN' 'MAX' 'COUNT'"
+        in: query
+        name: aggregate
+        schema:
+          type: string
+      - description: "Timezone ex: Asia/Tehran"
+        in: query
+        name: timezone
+        schema:
+          type: string
+      - description: Filter by stream IDs
+        explode: false
+        in: query
+        name: filters.stream
+        schema:
+          items:
+            description: Stream ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by country IDs
+        explode: false
+        in: query
+        name: filters.country
+        schema:
+          items:
+            description: "Country ID ex: IR, CA"
+            type: string
+          type: array
+        style: form
+      - description: Filter by asn numbers
+        explode: false
+        in: query
+        name: filters.asn
+        schema:
+          items:
+            description: "ASN number ex: 202468"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client type
+        explode: false
+        in: query
+        name: filters.client_type
+        schema:
+          items:
+            description: "Client type ex: browser, mobile app"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client family
+        explode: false
+        in: query
+        name: filters.client_family
+        schema:
+          items:
+            description: "client family ex: Android Browser, Chrome, Safari, Firefox"
+            type: string
+          type: array
+        style: form
+      - description: Filter by os family
+        explode: false
+        in: query
+        name: filters.os_family
+        schema:
+          items:
+            description: "OS family ex: Android, Windows, iOS, GNU/Linux, Mac"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device type
+        explode: false
+        in: query
+        name: filters.device_type
+        schema:
+          items:
+            description: "Device type ex: smartphone, tv, desktop, tablet"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device brand
+        explode: false
+        in: query
+        name: filters.device_brand
+        schema:
+          items:
+            description: "Device brand ex: Samsung, Huawei, Xiaomi, Apple, Asus"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device model
+        explode: false
+        in: query
+        name: filters.device_model
+        schema:
+          items:
+            description: "Device model ex: Galaxy A50s, Galaxy S6"
+            type: string
+          type: array
+        style: form
+      - description: Filter by resolution
+        explode: false
+        in: query
+        name: filters.resolution
+        schema:
+          items:
+            description: "Resolution ex: 1920x1080"
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content: {}
+          description: Return appropriate watch time
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return appropriate play count
+      tags:
+      - Analytics
+  /analytics/traffic:
+    get:
+      description: |-
+        Interval constraint
+                                - Max 'daily' : 30d
+                                - Max 'hourly' : 2d
+                                - Max 'minutely' : 2h
+                                <br/>
+                                Period constraint
+                                - Max : 30d
+                                <br/>
+                                Since and until constraint
+                                - Max of date format : 30d
+                                - Max of date-time format : 2d
+                                - The format of both should be the same either as date-time or as date.
+                                <br/>
+                                Aggregate constraint
+                                - It should be used with group_by or interval.
+      parameters:
+      - description: "Enum: '1h' '2h' '3h' '6h' '12h' '24h' '3d' '7d' '14d' '1m'"
+        in: query
+        name: Period
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: since
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: until
+        schema:
+          type: string
+      - description: "Enum: 'minutely' 'hourly' 'daily'"
+        in: query
+        name: interval
+        schema:
+          type: string
+      - description: "Enum: traffic"
+        in: query
+        name: order_by.name
+        schema:
+          type: string
+      - description: "Enum: 'ASC' 'DESC'"
+        in: query
+        name: order_by.order
+        schema:
+          type: string
+      - description: "Enum: 'channel' 'video' 'country' 'asn' 'referer'"
+        in: query
+        name: group_by
+        schema:
+          type: string
+      - description: Limit the number of entities
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Define offset of entities
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: "Enum: 'SUM' 'AVG' 'MIN' 'MAX' 'COUNT'"
+        in: query
+        name: aggregate
+        schema:
+          type: string
+      - description: "Timezone ex: Asia/Tehran"
+        in: query
+        name: timezone
+        schema:
+          type: string
+      - description: Filter by stream IDs
+        explode: false
+        in: query
+        name: filters.stream
+        schema:
+          items:
+            description: Stream ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by country IDs
+        explode: false
+        in: query
+        name: filters.country
+        schema:
+          items:
+            description: "Country ID ex: IR, CA"
+            type: string
+          type: array
+        style: form
+      - description: Filter by asn numbers
+        explode: false
+        in: query
+        name: filters.asn
+        schema:
+          items:
+            description: "ASN number ex: 202468"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client type
+        explode: false
+        in: query
+        name: filters.client_type
+        schema:
+          items:
+            description: "Client type ex: browser, mobile app"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client family
+        explode: false
+        in: query
+        name: filters.client_family
+        schema:
+          items:
+            description: "client family ex: Android Browser, Chrome, Safari, Firefox"
+            type: string
+          type: array
+        style: form
+      - description: Filter by os family
+        explode: false
+        in: query
+        name: filters.os_family
+        schema:
+          items:
+            description: "OS family ex: Android, Windows, iOS, GNU/Linux, Mac"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device type
+        explode: false
+        in: query
+        name: filters.device_type
+        schema:
+          items:
+            description: "Device type ex: smartphone, tv, desktop, tablet"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device brand
+        explode: false
+        in: query
+        name: filters.device_brand
+        schema:
+          items:
+            description: "Device brand ex: Samsung, Huawei, Xiaomi, Apple, Asus"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device model
+        explode: false
+        in: query
+        name: filters.device_model
+        schema:
+          items:
+            description: "Device model ex: Galaxy A50s, Galaxy S6"
+            type: string
+          type: array
+        style: form
+      - description: Filter by resolution
+        explode: false
+        in: query
+        name: filters.resolution
+        schema:
+          items:
+            description: "Resolution ex: 1920x1080"
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content: {}
+          description: Return appropriate traffic
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return appropriate traffic
+      tags:
+      - Analytics
+  /analytics/watch-time:
+    get:
+      description: |-
+        Interval constraint
+                                - Max 'daily' : 30d
+                                - Max 'hourly' : 2d
+                                - Max 'minutely' : 2h
+                                <br/>
+                                Period constraint
+                                - Max : 30d
+                                <br/>
+                                Since and until constraint
+                                - Max of date format : 30d
+                                - Max of date-time format : 2d
+                                - The format of both should be the same either as date-time or as date.
+                                <br/>
+                                Aggregate constraint
+                                - It should be used with group_by or interval.
+      parameters:
+      - description: "Enum: '1h' '2h' '3h' '6h' '12h' '24h' '3d' '7d' '14d' '1m'"
+        in: query
+        name: Period
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: since
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: until
+        schema:
+          type: string
+      - description: "Enum: 'minutely' 'hourly' 'daily'"
+        in: query
+        name: interval
+        schema:
+          type: string
+      - description: "Enum: watch_time"
+        in: query
+        name: order_by.name
+        schema:
+          type: string
+      - description: "Enum: 'ASC' 'DESC'"
+        in: query
+        name: order_by.order
+        schema:
+          type: string
+      - description: "Enum: 'channel' 'video' 'country' 'asn'"
+        in: query
+        name: group_by
+        schema:
+          type: string
+      - description: Limit the number of entities
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Define offset of entities
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: "Enum: 'SUM' 'AVG' 'MIN' 'MAX' 'COUNT'"
+        in: query
+        name: aggregate
+        schema:
+          type: string
+      - description: "Timezone ex: Asia/Tehran"
+        in: query
+        name: timezone
+        schema:
+          type: string
+      - description: Filter by stream IDs
+        explode: false
+        in: query
+        name: filters.stream
+        schema:
+          items:
+            description: Stream ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by country IDs
+        explode: false
+        in: query
+        name: filters.country
+        schema:
+          items:
+            description: "Country ID ex: IR, CA"
+            type: string
+          type: array
+        style: form
+      - description: Filter by asn numbers
+        explode: false
+        in: query
+        name: filters.asn
+        schema:
+          items:
+            description: "ASN number ex: 202468"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client type
+        explode: false
+        in: query
+        name: filters.client_type
+        schema:
+          items:
+            description: "Client type ex: browser, mobile app"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client family
+        explode: false
+        in: query
+        name: filters.client_family
+        schema:
+          items:
+            description: "client family ex: Android Browser, Chrome, Safari, Firefox"
+            type: string
+          type: array
+        style: form
+      - description: Filter by os family
+        explode: false
+        in: query
+        name: filters.os_family
+        schema:
+          items:
+            description: "OS family ex: Android, Windows, iOS, GNU/Linux, Mac"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device type
+        explode: false
+        in: query
+        name: filters.device_type
+        schema:
+          items:
+            description: "Device type ex: smartphone, tv, desktop, tablet"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device brand
+        explode: false
+        in: query
+        name: filters.device_brand
+        schema:
+          items:
+            description: "Device brand ex: Samsung, Huawei, Xiaomi, Apple, Asus"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device model
+        explode: false
+        in: query
+        name: filters.device_model
+        schema:
+          items:
+            description: "Device model ex: Galaxy A50s, Galaxy S6"
+            type: string
+          type: array
+        style: form
+      - description: Filter by resolution
+        explode: false
+        in: query
+        name: filters.resolution
+        schema:
+          items:
+            description: "Resolution ex: 1920x1080"
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content: {}
+          description: Return appropriate watch time
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return appropriate watch time
+      tags:
+      - Analytics
+  /report/geo:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Domain Geo
+      security:
+      - api_key: []
+      summary: Return Domain Geo Report.
+      tags:
+      - General Report
+  /report/statistics:
+    get:
+      responses:
+        "200":
+          content: {}
+          description: Domain Statistica (video and channel count)
+      security:
+      - api_key: []
+      summary: Return Domain statistics report.
+      tags:
+      - General Report
+  /report/traffics:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Domain Traffic
+      security:
+      - api_key: []
+      summary: Return Domain Traffic.
+      tags:
+      - General Report
+  /report/user-agent:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: user agent
+      security:
+      - api_key: []
+      summary: Return User Agent.
+      tags:
+      - General Report
+  /report/visitors:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Domain Visitors
+      security:
+      - api_key: []
+      summary: Return Domain Visitors.
+      tags:
+      - General Report
+  /streams:
+    get:
+      parameters:
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      - description: The IP address for generate secure links for. If stream is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If stream is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return all streams
+      security:
+      - api_key: []
+      summary: Return all streams.
+      tags:
+      - Stream
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_streams_post_request'
+        description: Stream details
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created stream
+      security:
+      - api_key: []
+      summary: Store a newly created stream.
+      tags:
+      - Stream
+      x-codegen-request-body-name: body
+  /streams/{stream}:
+    delete:
+      parameters:
+      - description: The Id of stream
+        in: path
+        name: stream
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Stream deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified stream.
+      tags:
+      - Stream
+    get:
+      parameters:
+      - description: The Id of stream
+        in: path
+        name: stream
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If stream is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If stream is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return the specific stream
+      security:
+      - api_key: []
+      summary: Return the specified stream.
+      tags:
+      - Stream
+    patch:
+      parameters:
+      - description: The Id of stream
+        in: path
+        name: stream
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_streams__stream__patch_request'
+        description: Stream details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated stream
+      security:
+      - api_key: []
+      summary: Update the specified stream.
+      tags:
+      - Stream
+      x-codegen-request-body-name: body
+  /streams/{stream}/start-record:
+    get:
+      description: Start live archive
+      responses:
+        "200":
+          content: {}
+          description: start live archive
+      security:
+      - api_key: []
+      summary: Start record live stream.
+      tags:
+      - Stream
+  /streams/{stream}/stop-record:
+    get:
+      description: Stop live archive
+      responses:
+        "200":
+          content: {}
+          description: Stop live archive
+      security:
+      - api_key: []
+      summary: Stop record live stream.
+      tags:
+      - Stream
+  /domain:
+    get:
+      responses:
+        "200":
+          content: {}
+          description: Return User Domain
+        "404":
+          content: {}
+          description: If user has no domain
+      security:
+      - api_key: []
+      summary: Return User Domain.
+      tags:
+      - Domain
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_domain_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created domain
+      security:
+      - api_key: []
+      summary: Set subdomain for LIVE service.
+      tags:
+      - Domain
+      x-codegen-request-body-name: body
+  /watermarks:
+    get:
+      parameters:
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return all watermarks
+      security:
+      - api_key: []
+      summary: Return all watermarks.
+      tags:
+      - Watermark
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_watermarks_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created Watermark
+      security:
+      - api_key: []
+      summary: Store a newly created Watermark.
+      tags:
+      - Watermark
+  /watermarks/{watermark}:
+    delete:
+      parameters:
+      - description: The Id of watermark
+        in: path
+        name: watermark
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Watermark deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified watermark.
+      tags:
+      - Watermark
+    get:
+      parameters:
+      - description: The Id of watermark
+        in: path
+        name: watermark
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific watermark
+      security:
+      - api_key: []
+      summary: Return the specified watermark.
+      tags:
+      - Watermark
+    patch:
+      parameters:
+      - description: The Id of watermark
+        in: path
+        name: watermark
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_watermarks__watermark__patch_request'
+        description: Watermark details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated watermark
+      security:
+      - api_key: []
+      summary: Update the specified watermark.
+      tags:
+      - Watermark
+      x-codegen-request-body-name: body
+components:
+  parameters:
+    Accept-Language:
+      in: header
+      name: Accept-Language
+      schema:
+        enum:
+        - en
+        - fa
+        type: string
+  schemas:
+    _streams_post_request:
+      properties:
+        title:
+          description: Title of the stream
+          type: string
+        description:
+          description: Description of the stream
+          type: string
+        type:
+          description: Stream latency type
+          enum:
+          - normal
+          - low_latency
+          type: string
+        mode:
+          description: Way to receive input stream
+          enum:
+          - pull
+          - push
+          type: string
+        input_url:
+          description: Public URL of stream input in PULL mode
+          type: string
+        slug:
+          description: Unique slug for your stream. Only contain lower case letters
+            and digits
+          type: string
+        timeshift:
+          description: Timeshift (DVR) in minutes to watch the earlier content
+          type: integer
+        fps_mode:
+          description: stream fps mode
+          enum:
+          - auto
+          - manual
+          type: string
+        fps:
+          description: Input steam frame per second
+          type: integer
+        archive_enabled:
+          default: false
+          description: Set this value to True to archive the stream as a VoD
+          type: boolean
+        catchup_enabled:
+          default: false
+          description: Set this value to True to enable catchup for the stream
+          type: boolean
+        catchup_period:
+          description: Hours of catchup must be available for the stream
+          type: integer
+        archive_mode:
+          description: Way to archive stream
+          enum:
+          - auto
+          - manual
+          type: string
+        channel_id:
+          description: Channel Id to save archive
+          type: string
+        watermark_id:
+          description: "If you want to use watermark for a video, use this ID"
+          type: string
+        watermark_area:
+          description: Area of the watermark if watermark_id presents
+          enum:
+          - CENTER
+          - FIX_TOP_LEFT
+          - FIX_TOP_RIGHT
+          - FIX_TOP_CENTER
+          - FIX_BOTTOM_LEFT
+          - FIX_BOTTOM_RIGHT
+          - FIX_BOTTOM_CENTER
+          - ANIMATE_LEFT_TO_RIGHT
+          - ANIMATE_TOP_TO_BOTTOM
+          type: string
+        convert_info:
+          description: Array of convert details
+          items:
+            $ref: '#/components/schemas/_streams_post_request_convert_info_inner'
+          type: array
+        secure_link_enabled:
+          description: Enable or disable secure link for all videos in channel
+          example: false
+          type: boolean
+        secure_link_key:
+          description: Key for generate secure links
+          type: string
+        secure_link_with_ip:
+          description: IP can be considered as an optional parameter
+          example: true
+          type: boolean
+        ads_enabled:
+          description: Enable or disable Ads for created stream
+          example: false
+          type: boolean
+        present_type:
+          description: Ads present method
+          enum:
+          - manual
+          type: string
+        campaign_id:
+          description: Created CampaignId in Ads
+          type: string
+      required:
+      - convert_info
+      - fps
+      - mode
+      - slug
+      - title
+      - type
+      type: object
+    _streams_post_request_convert_info_inner:
+      properties:
+        audio_bitrate:
+          description: Audio bitrate in kilobit
+          type: integer
+        video_bitrate:
+          description: Video bitrate in kilobit
+          type: integer
+        resolution_width:
+          description: resolution width
+          type: integer
+        resolution_height:
+          description: resolution height
+          type: integer
+        watermark_id:
+          description: "If you want to use watermark for a video, use this ID"
+          type: string
+        watermark_area:
+          description: Area of the watermark if watermark_id presents
+          enum:
+          - CENTER
+          - FIX_TOP_LEFT
+          - FIX_TOP_RIGHT
+          - FIX_TOP_CENTER
+          - FIX_BOTTOM_LEFT
+          - FIX_BOTTOM_RIGHT
+          - FIX_BOTTOM_CENTER
+          - ANIMATE_LEFT_TO_RIGHT
+          - ANIMATE_TOP_TO_BOTTOM
+          type: string
+      type: object
+    _streams__stream__patch_request:
+      properties:
+        title:
+          description: Title of the stream
+          type: string
+        description:
+          description: Description of the stream
+          type: string
+        type:
+          description: Stream latency type
+          enum:
+          - normal
+          - low_latency
+          type: string
+        mode:
+          description: Way to receive input stream
+          enum:
+          - pull
+          - push
+          type: string
+        input_url:
+          description: Public URL of stream input in PULL mode
+          type: string
+        slug:
+          description: Unique slug for your stream. Only contain lower case letters
+            and digits
+          type: string
+        timeshift:
+          description: Timeshift (DVR) in minutes to watch the earlier content
+          type: integer
+        fps_mode:
+          description: stream fps mode
+          enum:
+          - auto
+          - manual
+          type: string
+        fps:
+          description: Input steam frame per second
+          type: integer
+        archive_enabled:
+          default: false
+          description: Set this value to True to archive the stream as a VoD
+          type: boolean
+        catchup_enabled:
+          default: false
+          description: Set this value to True to enable catchup for the stream
+          type: boolean
+        catchup_period:
+          description: Hours of catchup must be available for the stream
+          type: integer
+        archive_mode:
+          description: Way to archive stream
+          enum:
+          - auto
+          - manual
+          type: string
+        channel_id:
+          description: Channel Id to save archive
+          type: string
+        watermark_id:
+          description: "If you want to use watermark for a video, use this ID"
+          type: string
+        watermark_area:
+          description: Area of the watermark if watermark_id presents
+          enum:
+          - CENTER
+          - FIX_TOP_LEFT
+          - FIX_TOP_RIGHT
+          - FIX_TOP_CENTER
+          - FIX_BOTTOM_LEFT
+          - FIX_BOTTOM_RIGHT
+          - FIX_BOTTOM_CENTER
+          - ANIMATE_LEFT_TO_RIGHT
+          - ANIMATE_TOP_TO_BOTTOM
+          type: string
+        convert_info:
+          description: Array of convert details
+          items:
+            $ref: '#/components/schemas/_streams_post_request_convert_info_inner'
+          type: array
+        secure_link_enabled:
+          description: Enable or disable secure link for all videos in channel
+          example: false
+          type: boolean
+        secure_link_key:
+          description: Key for generate secure links
+          type: string
+        secure_link_with_ip:
+          description: IP can be considered as an optional parameter
+          example: true
+          type: boolean
+        ads_enabled:
+          description: Enable or disable Ads
+          example: false
+          type: boolean
+        present_type:
+          description: Ads present method
+          enum:
+          - auto
+          - manual
+          type: string
+        campaign_id:
+          description: Created CampaignId in Ads
+          type: string
+      type: object
+    _watermarks__watermark__patch_request:
+      properties:
+        title:
+          description: Title of watermark
+          type: string
+        description:
+          description: Description of watermark
+          type: string
+      type: object
+    _domain_post_request:
+      properties:
+        subdomain:
+          description: The subdomain. Only contain lower case letters and digits
+          type: string
+      type: object
+    _watermarks_post_request:
+      properties:
+        title:
+          description: Title of watermark
+          type: string
+        description:
+          description: Description of watermark
+          type: string
+        watermark:
+          description: Watermark file
+          format: binary
+          type: string
+      required:
+      - title
+      - watermark
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: Authorization
+      type: apiKey
+x-original-swagger-version: "2.0"

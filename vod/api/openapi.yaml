@@ -1,0 +1,2821 @@
+openapi: 3.0.1
+info:
+  title: Arvan VOD
+  version: "2.0"
+  x-logo:
+    url: /images/other/arvan-api-docs-logo.svg
+    backgroundColor: white
+    altText: arvancloud
+servers:
+- url: https://napi.arvancloud.ir/vod/2.0
+paths:
+  /analytics/play-count:
+    get:
+      description: |-
+        Interval constraint
+                                - Max 'daily' : 30d
+                                - Max 'hourly' : 2d
+                                - Max 'minutely' : 2h
+                                <br/>
+                                Period constraint
+                                - Max : 30d
+                                <br/>
+                                Since and until constraint
+                                - Max of date format : 30d
+                                - Max of date-time format : 2d
+                                - The format of both should be the same either as date-time or as date.
+                                <br/>
+                                Aggregate constraint
+                                - It should be used with group_by or interval.
+      parameters:
+      - description: "Enum: '1h' '2h' '3h' '6h' '12h' '24h' '3d' '7d' '14d' '1m' "
+        in: query
+        name: Period
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: since
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: until
+        schema:
+          type: string
+      - description: "Enum: 'minutely' 'hourly' 'daily'"
+        in: query
+        name: interval
+        schema:
+          type: string
+      - description: "Enum: watch_time"
+        in: query
+        name: order_by.name
+        schema:
+          type: string
+      - description: "Enum: 'ASC' 'DESC'"
+        in: query
+        name: order_by.order
+        schema:
+          type: string
+      - description: "Enum: 'channel' 'video' 'country' 'asn'"
+        in: query
+        name: group_by
+        schema:
+          type: string
+      - description: Limit the number of entities
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Define offset of entities
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: "Enum: 'SUM' 'AVG' 'MIN' 'MAX' 'COUNT'"
+        in: query
+        name: aggregate
+        schema:
+          type: string
+      - description: "Timezone ex: Asia/Tehran"
+        in: query
+        name: timezone
+        schema:
+          type: string
+      - description: Filter by channel IDs
+        explode: false
+        in: query
+        name: filters.channel
+        schema:
+          items:
+            description: Channel ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by video IDs
+        explode: false
+        in: query
+        name: filters.video
+        schema:
+          items:
+            description: Video ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by country IDs
+        explode: false
+        in: query
+        name: filters.country
+        schema:
+          items:
+            description: "Country ID ex: IR, CA"
+            type: string
+          type: array
+        style: form
+      - description: Filter by asn numbers
+        explode: false
+        in: query
+        name: filters.asn
+        schema:
+          items:
+            description: "ASN number ex: 202468"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client type
+        explode: false
+        in: query
+        name: filters.client_type
+        schema:
+          items:
+            description: "Client type ex: browser, mobile app"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client family
+        explode: false
+        in: query
+        name: filters.client_family
+        schema:
+          items:
+            description: "client family ex: Android Browser, Chrome, Safari, Firefox"
+            type: string
+          type: array
+        style: form
+      - description: Filter by os family
+        explode: false
+        in: query
+        name: filters.os_family
+        schema:
+          items:
+            description: "OS family ex: Android, Windows, iOS, GNU/Linux, Mac"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device type
+        explode: false
+        in: query
+        name: filters.device_type
+        schema:
+          items:
+            description: "Device type ex: smartphone, tv, desktop, tablet"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device brand
+        explode: false
+        in: query
+        name: filters.device_brand
+        schema:
+          items:
+            description: "Device brand ex: Samsung, Huawei, Xiaomi, Apple, Asus"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device model
+        explode: false
+        in: query
+        name: filters.device_model
+        schema:
+          items:
+            description: "Device model ex: Galaxy A50s, Galaxy S6"
+            type: string
+          type: array
+        style: form
+      - description: Filter by resolution
+        explode: false
+        in: query
+        name: filters.resolution
+        schema:
+          items:
+            description: "Resolution ex: 1920x1080"
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content: {}
+          description: Return appropriate watch time
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return appropriate play count
+      tags:
+      - Analytics
+  /analytics/traffic:
+    get:
+      description: |-
+        Interval constraint
+                                - Max 'daily' : 30d
+                                - Max 'hourly' : 2d
+                                - Max 'minutely' : 2h
+                                <br/>
+                                Period constraint
+                                - Max : 30d
+                                <br/>
+                                Since and until constraint
+                                - Max of date format : 30d
+                                - Max of date-time format : 2d
+                                - The format of both should be the same either as date-time or as date.
+                                <br/>
+                                Aggregate constraint
+                                - It should be used with group_by or interval.
+      parameters:
+      - description: "Enum:  '1h' '2h' '3h' '6h' '12h' '24h' '3d' '7d' '14d' '1m' "
+        in: query
+        name: Period
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: since
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: until
+        schema:
+          type: string
+      - description: "Enum: 'minutely' 'hourly' 'daily'"
+        in: query
+        name: interval
+        schema:
+          type: string
+      - description: "Enum: traffic"
+        in: query
+        name: order_by.name
+        schema:
+          type: string
+      - description: "Enum: 'ASC' 'DESC'"
+        in: query
+        name: order_by.order
+        schema:
+          type: string
+      - description: "Enum: 'channel' 'video' 'country' 'asn' 'referer'"
+        in: query
+        name: group_by
+        schema:
+          type: string
+      - description: Limit the number of entities
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Define offset of entities
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: "Enum: 'SUM' 'AVG' 'MIN' 'MAX' 'COUNT'"
+        in: query
+        name: aggregate
+        schema:
+          type: string
+      - description: "Timezone ex: Asia/Tehran"
+        in: query
+        name: timezone
+        schema:
+          type: string
+      - description: Filter by channel IDs
+        explode: false
+        in: query
+        name: filters.channel
+        schema:
+          items:
+            description: Channel ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by video IDs
+        explode: false
+        in: query
+        name: filters.video
+        schema:
+          items:
+            description: Video ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by country IDs
+        explode: false
+        in: query
+        name: filters.country
+        schema:
+          items:
+            description: "Country ID ex: IR, CA"
+            type: string
+          type: array
+        style: form
+      - description: Filter by asn numbers
+        explode: false
+        in: query
+        name: filters.asn
+        schema:
+          items:
+            description: "ASN number ex: 202468"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client type
+        explode: false
+        in: query
+        name: filters.client_type
+        schema:
+          items:
+            description: "Client type ex: browser, mobile app"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client family
+        explode: false
+        in: query
+        name: filters.client_family
+        schema:
+          items:
+            description: "client family ex: Android Browser, Chrome, Safari, Firefox"
+            type: string
+          type: array
+        style: form
+      - description: Filter by os family
+        explode: false
+        in: query
+        name: filters.os_family
+        schema:
+          items:
+            description: "OS family ex: Android, Windows, iOS, GNU/Linux, Mac"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device type
+        explode: false
+        in: query
+        name: filters.device_type
+        schema:
+          items:
+            description: "Device type ex: smartphone, tv, desktop, tablet"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device brand
+        explode: false
+        in: query
+        name: filters.device_brand
+        schema:
+          items:
+            description: "Device brand ex: Samsung, Huawei, Xiaomi, Apple, Asus"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device model
+        explode: false
+        in: query
+        name: filters.device_model
+        schema:
+          items:
+            description: "Device model ex: Galaxy A50s, Galaxy S6"
+            type: string
+          type: array
+        style: form
+      - description: Filter by resolution
+        explode: false
+        in: query
+        name: filters.resolution
+        schema:
+          items:
+            description: "Resolution ex: 1920x1080"
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content: {}
+          description: Return appropriate traffic
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return appropriate traffic
+      tags:
+      - Analytics
+  /analytics/watch-time:
+    get:
+      description: |-
+        Interval constraint
+                                - Max 'daily' : 30d
+                                - Max 'hourly' : 2d
+                                - Max 'minutely' : 2h
+                                <br/>
+                                Period constraint
+                                - Max : 30d
+                                <br/>
+                                Since and until constraint
+                                - Max of date format : 30d
+                                - Max of date-time format : 2d
+                                - The format of both should be the same either as date-time or as date.
+                                <br/>
+                                Aggregate constraint
+                                - It should be used with group_by or interval.
+      parameters:
+      - description: "Enum: '1h' '2h' '3h' '6h' '12h' '24h' '3d' '7d' '14d' '1m'"
+        in: query
+        name: Period
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: since
+        schema:
+          type: string
+      - description: "string <date-time:Y-m-d H:i>|<date: Y-m-d>"
+        in: query
+        name: until
+        schema:
+          type: string
+      - description: "Enum: 'minutely' 'hourly' 'daily'"
+        in: query
+        name: interval
+        schema:
+          type: string
+      - description: "Enum: watch_time"
+        in: query
+        name: order_by.name
+        schema:
+          type: string
+      - description: "Enum: 'ASC' 'DESC'"
+        in: query
+        name: order_by.order
+        schema:
+          type: string
+      - description: "Enum: 'channel' 'video' 'country' 'asn'"
+        in: query
+        name: group_by
+        schema:
+          type: string
+      - description: Limit the number of entities
+        in: query
+        name: limit
+        schema:
+          type: integer
+      - description: Define offset of entities
+        in: query
+        name: offset
+        schema:
+          type: integer
+      - description: "Enum: 'SUM' 'AVG' 'MIN' 'MAX' 'COUNT'"
+        in: query
+        name: aggregate
+        schema:
+          type: string
+      - description: "Timezone ex: Asia/Tehran"
+        in: query
+        name: timezone
+        schema:
+          type: string
+      - description: Filter by channel IDs
+        explode: false
+        in: query
+        name: filters.channel
+        schema:
+          items:
+            description: Channel ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by video IDs
+        explode: false
+        in: query
+        name: filters.video
+        schema:
+          items:
+            description: Video ID
+            type: string
+          type: array
+        style: form
+      - description: Filter by country IDs
+        explode: false
+        in: query
+        name: filters.country
+        schema:
+          items:
+            description: "Country ID ex: IR, CA"
+            type: string
+          type: array
+        style: form
+      - description: Filter by asn numbers
+        explode: false
+        in: query
+        name: filters.asn
+        schema:
+          items:
+            description: "ASN number ex: 202468"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client type
+        explode: false
+        in: query
+        name: filters.client_type
+        schema:
+          items:
+            description: "Client type ex: browser, mobile app"
+            type: string
+          type: array
+        style: form
+      - description: Filter by client family
+        explode: false
+        in: query
+        name: filters.client_family
+        schema:
+          items:
+            description: "client family ex: Android Browser, Chrome, Safari, Firefox"
+            type: string
+          type: array
+        style: form
+      - description: Filter by os family
+        explode: false
+        in: query
+        name: filters.os_family
+        schema:
+          items:
+            description: "OS family ex: Android, Windows, iOS, GNU/Linux, Mac"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device type
+        explode: false
+        in: query
+        name: filters.device_type
+        schema:
+          items:
+            description: "Device type ex: smartphone, tv, desktop, tablet"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device brand
+        explode: false
+        in: query
+        name: filters.device_brand
+        schema:
+          items:
+            description: "Device brand ex: Samsung, Huawei, Xiaomi, Apple, Asus"
+            type: string
+          type: array
+        style: form
+      - description: Filter by device model
+        explode: false
+        in: query
+        name: filters.device_model
+        schema:
+          items:
+            description: "Device model ex: Galaxy A50s, Galaxy S6"
+            type: string
+          type: array
+        style: form
+      - description: Filter by resolution
+        explode: false
+        in: query
+        name: filters.resolution
+        schema:
+          items:
+            description: "Resolution ex: 1920x1080"
+            type: string
+          type: array
+        style: form
+      responses:
+        "200":
+          content: {}
+          description: Return appropriate watch time
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return appropriate watch time
+      tags:
+      - Analytics
+  /channels/{channel}/audios:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return all channel's audios
+      security:
+      - api_key: []
+      summary: Return all channel's audios.
+      tags:
+      - Audio
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels__channel__audios_post_request'
+        description: Audio details
+        required: true
+      responses:
+        "404":
+          content: {}
+          description: Channel not found
+        "201":
+          content: {}
+          description: Return created audio
+      security:
+      - api_key: []
+      summary: Store a newly created audio.
+      tags:
+      - Audio
+      x-codegen-request-body-name: body
+  /audios/{audio}:
+    delete:
+      parameters:
+      - description: The Id of audio
+        in: path
+        name: audio
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Audio deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified audio.
+      tags:
+      - Audio
+    get:
+      parameters:
+      - description: The Id of audio
+        in: path
+        name: audio
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return the specific audio
+      security:
+      - api_key: []
+      summary: Return the specified audio.
+      tags:
+      - Audio
+    patch:
+      parameters:
+      - description: The Id of audio
+        in: path
+        name: audio
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_audios__audio__patch_request'
+        description: Audio details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated audio
+      security:
+      - api_key: []
+      summary: Update the specified audio.
+      tags:
+      - Audio
+      x-codegen-request-body-name: body
+  /videos/{video}/audio-tracks:
+    get:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "404":
+          content: {}
+          description: Video not found
+        "200":
+          content: {}
+          description: Return list of all video's audio tracks
+      security:
+      - api_key: []
+      summary: Display a listing of the Audio Tracks.
+      tags:
+      - Audio Track
+    post:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_videos__video__audio_tracks_post_request'
+        required: true
+      responses:
+        "404":
+          content: {}
+          description: Video not found
+        "201":
+          content: {}
+          description: Return created Audio Track
+      security:
+      - api_key: []
+      summary: Store a newly created audio track.
+      tags:
+      - Audio Track
+  /audio-tracks/{audio_track}:
+    delete:
+      parameters:
+      - description: The Id of audio track
+        in: path
+        name: audio_track
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Audio track deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified audio track.
+      tags:
+      - Audio Track
+    get:
+      parameters:
+      - description: The Id of audio track
+        in: path
+        name: audio_track
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return the specific audio track
+      security:
+      - api_key: []
+      summary: Return the specified audio track.
+      tags:
+      - Audio Track
+  /channels:
+    get:
+      parameters:
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return list of all user channel
+        "401":
+          content: {}
+          description: Unauthenticated
+      security:
+      - api_key: []
+      summary: Return all user's channels.
+      tags:
+      - Channel
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels_post_request'
+        description: Channel details
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created channel
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Store a newly channel.
+      tags:
+      - Channel
+      x-codegen-request-body-name: body
+  /channels/{channel}:
+    delete:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Channel deleted successfully
+        "401":
+          content: {}
+          description: Unauthenticated
+        "404":
+          content: {}
+          description: Not Found
+      security:
+      - api_key: []
+      summary: Remove the specified channel.
+      tags:
+      - Channel
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific channel
+        "401":
+          content: {}
+          description: Unauthenticated
+        "404":
+          content: {}
+          description: Not Found
+      security:
+      - api_key: []
+      summary: Return the specified channel.
+      tags:
+      - Channel
+    patch:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels__channel__patch_request'
+        description: Channel details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated channel
+        "401":
+          content: {}
+          description: Unauthenticated
+        "404":
+          content: {}
+          description: Not Found
+      security:
+      - api_key: []
+      summary: Update the specified channel.
+      tags:
+      - Channel
+      x-codegen-request-body-name: body
+  /channels/{channel}/files:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return list of all files
+      security:
+      - api_key: []
+      summary: Return all draft files of channel.
+      tags:
+      - File
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: version of tus.io
+        in: header
+        name: tus-resumable
+        required: true
+        schema:
+          default: 1.0.0
+          enum:
+          - 1.0.0
+          type: string
+      - description: To indicate the size of entire upload in bytes
+        in: header
+        name: upload-length
+        required: true
+        schema:
+          type: integer
+      - description: |-
+          To add additional metadata to the upload creation request.
+               * MUST contain 'filename' and 'filetype'. From all available fields only these two fields will be used.
+               * MUST consist of one or more comma-separated key-value pairs.
+               * The key and value MUST be separated by a space.
+               * The key MUST NOT contain spaces and commas and MUST NOT be empty.
+               * The key SHOULD be ASCII encoded and the value MUST be Base64 encoded.
+        in: header
+        name: upload-metadata
+        required: true
+        schema:
+          type: string
+      responses:
+        "201":
+          content: {}
+          description: File created successfully
+      security:
+      - api_key: []
+      summary: Request a new upload file. See https://tus.io/ for more detail.
+      tags:
+      - File
+  /files/{file}:
+    get:
+      parameters:
+      - description: The Id of file
+        in: path
+        name: File
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific file
+      security:
+      - api_key: []
+      summary: Return the specified file.
+      tags:
+      - File
+  /channels/{channel}/files/{file}:
+    head:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: The Id of file
+        in: path
+        name: file
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return file upload offset
+        "404":
+          content: {}
+          description: File not found
+      security:
+      - api_key: []
+      summary: Get upload offset. See https://tus.io/ for more detail.
+      tags:
+      - File
+    patch:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: The Id of file
+        in: path
+        name: file
+        required: true
+        schema:
+          type: string
+      - description: version of tus.io
+        in: header
+        name: tus-resumable
+        required: true
+        schema:
+          default: 1.0.0
+          enum:
+          - 1.0.0
+          type: string
+      - description: |-
+          request and response header indicates a byte offset within a resource.
+               * For uploading entire file in one request, set this to '0'
+        in: header
+        name: upload-offset
+        required: true
+        schema:
+          default: 0
+          type: integer
+      - description: Request content type
+        in: header
+        name: Content-Type
+        required: true
+        schema:
+          default: application/offset+octet-stream
+          enum:
+          - application/offset+octet-stream
+          type: string
+      responses:
+        "204":
+          content: {}
+          description: Acknowledge successful upload and apply bytes to file
+        "404":
+          content: {}
+          description: File not found
+      security:
+      - api_key: []
+      summary: Upload and apply bytes to a file. See https://tus.io/ for more detail.
+      tags:
+      - File
+  files/{file}:
+    delete:
+      parameters:
+      - description: The Id of file
+        in: path
+        name: file
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: File deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified file.
+      tags:
+      - File
+  /channels/{channel}/profiles:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return list of all channel's profile
+      security:
+      - api_key: []
+      summary: Return all channel's profiles.
+      tags:
+      - Profile
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels__channel__profiles_post_request'
+        description: Profile details
+        required: true
+      responses:
+        "404":
+          content: {}
+          description: Profile not found
+        "201":
+          content: {}
+          description: Return created profile
+      security:
+      - api_key: []
+      summary: Store a newly created profile.
+      tags:
+      - Profile
+      x-codegen-request-body-name: body
+  /profiles/{profile}:
+    delete:
+      parameters:
+      - description: The Id of profile
+        in: path
+        name: profile
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Profile deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified profile.
+      tags:
+      - Profile
+    get:
+      parameters:
+      - description: The Id of profile
+        in: path
+        name: profile
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific profile
+      security:
+      - api_key: []
+      summary: Return the specified profile.
+      tags:
+      - Profile
+    patch:
+      parameters:
+      - description: The Id of profile
+        in: path
+        name: profile
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_profiles__profile__patch_request'
+        description: Profile details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated profile
+      security:
+      - api_key: []
+      summary: Update the specified profile.
+      tags:
+      - Profile
+      x-codegen-request-body-name: body
+  /report/geo:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Domain Geo
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return Domain Geo Report.
+      tags:
+      - General Report
+  /report/statistics:
+    get:
+      responses:
+        "200":
+          content: {}
+          description: Domain Statistica (video and channel count)
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return Domain statistics report.
+      tags:
+      - General Report
+  /report/traffics:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Domain Traffic
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return Domain Traffic.
+      tags:
+      - General Report
+  /report/user-agent:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: user agent
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return User Agent.
+      tags:
+      - General Report
+  /report/visitors:
+    get:
+      parameters:
+      - description: "Values: 1h,3h,6h,12h,24h,7d,30d"
+        in: query
+        name: period
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Domain Visitors
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity.
+      security:
+      - api_key: []
+      summary: Return Domain Visitors.
+      tags:
+      - General Report
+  /videos/{video}/subtitles:
+    get:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "404":
+          content: {}
+          description: Video not found
+        "200":
+          content: {}
+          description: Return list of all video's subtitles
+      security:
+      - api_key: []
+      summary: Display a listing of the subtitle.
+      tags:
+      - Subtitle
+    post:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_videos__video__subtitles_post_request'
+        required: true
+      responses:
+        "404":
+          content: {}
+          description: Video not found
+        "201":
+          content: {}
+          description: Return created subtitle
+      security:
+      - api_key: []
+      summary: Store a newly created subtitle.
+      tags:
+      - Subtitle
+  /subtitles/{subtitle}:
+    delete:
+      parameters:
+      - description: The Id of subtitle
+        in: path
+        name: subtitle
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Subtitle deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified subtitle.
+      tags:
+      - Subtitle
+    get:
+      parameters:
+      - description: The Id of subtitle
+        in: path
+        name: subtitle
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return the specific subtitle
+      security:
+      - api_key: []
+      summary: Return the specified subtitle.
+      tags:
+      - Subtitle
+  /videos/{video}/tags:
+    get:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return all video's tags
+      security:
+      - api_key: []
+      summary: Return all vidoe's tags.
+      tags:
+      - Tag
+    put:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              items:
+                type: string
+              type: array
+        description: tags
+        required: false
+      responses:
+        "200":
+          content: {}
+          description: Return updated tag
+      security:
+      - api_key: []
+      summary: Update the video tags.
+      tags:
+      - Tag
+      x-codegen-request-body-name: body
+  /tags:
+    get:
+      parameters:
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: filter tags
+        in: path
+        name: filter
+        required: true
+        schema:
+          type: string
+      - description: "Sort ex: asc ,desc "
+        in: query
+        name: sort
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return all video's tags
+      security:
+      - api_key: []
+      summary: Return all user's tags.
+      tags:
+      - Tag
+    post:
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_tags_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created Tag
+      security:
+      - api_key: []
+      summary: Store a newly created Tag.
+      tags:
+      - Tag
+  /videos/{video}/thumbnail:
+    get:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "404":
+          content: {}
+          description: Video not found
+        "200":
+          content: {}
+          description: Return video thumbnail
+      security:
+      - api_key: []
+      summary: Display video thumbnail.
+      tags:
+      - Thumbnail
+    post:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_videos__video__thumbnail_post_request'
+      responses:
+        "404":
+          content: {}
+          description: Video not found
+        "201":
+          content: {}
+          description: Return created Thumbnail
+      security:
+      - api_key: []
+      summary: Store a newly created thumbnail.
+      tags:
+      - Thumbnail
+  /domain:
+    get:
+      responses:
+        "200":
+          content: {}
+          description: Return User Domain
+        "401":
+          content: {}
+          description: Unauthenticated
+        "404":
+          content: {}
+          description: If user has no domain
+      security:
+      - api_key: []
+      summary: Return User Domain.
+      tags:
+      - Domain
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_domain_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created domain
+        "401":
+          content: {}
+          description: Unauthenticated
+        "422":
+          content: {}
+          description: Unprocessable Entity or Subdomain is taken
+      security:
+      - api_key: []
+      summary: Set subdomain for VOD service.
+      tags:
+      - Domain
+      x-codegen-request-body-name: body
+  /channels/{channel}/videos:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      - description: "Order by ex: title, time"
+        in: query
+        name: order_by
+        schema:
+          type: string
+      - description: "Sort ex: asc ,desc "
+        in: query
+        name: sort
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return all channel's videos
+      security:
+      - api_key: []
+      summary: Return all channel's videos.
+      tags:
+      - Video
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels__channel__videos_post_request'
+        description: Video details
+        required: true
+      responses:
+        "404":
+          content: {}
+          description: Channel not found
+        "201":
+          content: {}
+          description: Return created video
+      security:
+      - api_key: []
+      summary: Store a newly created video.
+      tags:
+      - Video
+      x-codegen-request-body-name: body
+  /videos/{video}:
+    delete:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Video deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified video.
+      tags:
+      - Video
+    get:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return the specific video
+      security:
+      - api_key: []
+      summary: Return the specified video.
+      tags:
+      - Video
+    patch:
+      parameters:
+      - description: The Id of video
+        in: path
+        name: video
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_videos__video__patch_request'
+        description: Video details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated video
+      security:
+      - api_key: []
+      summary: Update the specified video.
+      tags:
+      - Video
+      x-codegen-request-body-name: body
+  /videos/bulk:
+    delete:
+      parameters:
+      - description: The Id's of video's
+        explode: false
+        in: path
+        name: ids
+        required: true
+        schema:
+          items:
+            type: string
+          type: array
+        style: simple
+      responses:
+        "200":
+          content: {}
+          description: Video's deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the multiple video.
+      tags:
+      - Video
+  /channels/{channel}/watermarks:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      - description: The IP address for generate secure links for. If channel is secure
+          default is request IP
+        in: query
+        name: secure_ip
+        schema:
+          type: string
+      - description: |-
+          The Unix Timestamp for expire secure links.
+               *          If channel is secure default is 24 hours later from now
+        in: query
+        name: secure_expire_time
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return all channel's watermarks
+      security:
+      - api_key: []
+      summary: Return all channel's watermarks.
+      tags:
+      - Watermark
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_channels__channel__watermarks_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created Watermark
+      security:
+      - api_key: []
+      summary: Store a newly created Watermark.
+      tags:
+      - Watermark
+  /watermarks/{watermark}:
+    delete:
+      parameters:
+      - description: The Id of watermark
+        in: path
+        name: watermark
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Watermark deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified watermark.
+      tags:
+      - Watermark
+    get:
+      parameters:
+      - description: The Id of watermark
+        in: path
+        name: watermark
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific watermark
+      security:
+      - api_key: []
+      summary: Return the specified watermark.
+      tags:
+      - Watermark
+    patch:
+      parameters:
+      - description: The Id of watermark
+        in: path
+        name: watermark
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_watermarks__watermark__patch_request'
+        description: Watermark details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated watermark
+      security:
+      - api_key: []
+      summary: Update the specified watermark.
+      tags:
+      - Watermark
+      x-codegen-request-body-name: body
+components:
+  parameters:
+    Accept-Language:
+      in: header
+      name: Accept-Language
+      schema:
+        enum:
+        - en
+        - fa
+        type: string
+  schemas:
+    _channels_post_request:
+      properties:
+        title:
+          description: Title of channel
+          type: string
+        description:
+          description: Description of channel
+          type: string
+        secure_link_enabled:
+          description: Enable or disable secure link for all videos in channel
+          example: false
+          type: boolean
+        secure_link_key:
+          description: Key for generate secure links
+          type: string
+        secure_link_with_ip:
+          description: IP can be considered as an optional parameter
+          example: true
+          type: boolean
+        ads_enabled:
+          description: Enable or disable Ads for all videos in channel
+          example: false
+          type: boolean
+        present_type:
+          description: Ads present method
+          enum:
+          - auto
+          - manual
+          type: string
+        campaign_id:
+          description: Created CampaignId in Ads
+          type: string
+      required:
+      - title
+      type: object
+    _channels__channel__patch_request:
+      properties:
+        title:
+          description: Title of channel
+          type: string
+        description:
+          description: Description of channel
+          type: string
+        secure_link_enabled:
+          description: Enable or disable secure link for all videos in channel
+          example: false
+          type: boolean
+        secure_link_key:
+          description: Key for generate secure links
+          type: string
+        secure_link_with_ip:
+          description: IP can be considered as an optional parameter
+          example: true
+          type: boolean
+        ads_enabled:
+          description: Enable or disable Ads for all videos in channel
+          example: false
+          type: boolean
+        present_type:
+          description: Ads present method
+          enum:
+          - auto
+          - manual
+          type: string
+        campaign_id:
+          description: Created CampaignId in Ads
+          type: string
+      type: object
+    _videos__video__patch_request:
+      properties:
+        title:
+          description: Title of the video
+          type: string
+        description:
+          description: Description of the video
+          type: string
+      type: object
+    _audios__audio__patch_request:
+      properties:
+        title:
+          description: Title of the audio
+          type: string
+        description:
+          description: Description of the audio
+          type: string
+      type: object
+    _videos__video__thumbnail_post_request:
+      properties:
+        thumbnail:
+          description: The png file.
+          format: binary
+          type: string
+        thumbnail_time:
+          description: Specific video time
+          format: int32
+          type: integer
+      type: object
+    _channels__channel__profiles_post_request_options_inner:
+      properties:
+        bframe:
+          description: "minimum: 0 maximum: 16, Sets the amount of b frames."
+          type: integer
+        level:
+          description: |-
+            If three-pass encoding is used and a level is set for the encoder,
+                 *                          the bitrate for some segments may exceed the bitrate limit which is
+                 *                          defined by the level.
+                 *                          Accepted values: 1,2,3,4,5,1.1,1.2,1.3,2.1,2.2,3.1,3.2,4.1,4.2,5.1,5.2
+          type: string
+        cabac:
+          description: Enable or disable CABAC and it should be boolean
+          type: boolean
+        crf:
+          description: |-
+            Sets the constant rate factor for quality-based variable bitrate.
+                 *                          Either bitrate or crf is required.
+                 *                          Minimum value should be 0 and the maximum would be 51
+          type: integer
+        minGop:
+          description: |-
+            Minimum GOP length, the minimum distance between I-frames.
+                 *                          Minimum value should be 1 and the maximum would be 6
+          type: integer
+        minKeyframeInterval:
+          description: |-
+            Minimum interval in seconds between key frames.
+                 *                          Minimum value should be 1 and the maximum would be 6
+          type: integer
+        bitrate_tolerance:
+          description: bitrate_tolerance
+          type: string
+        fps:
+          description: Minimum value should be 1 and the maximum would be 60
+          type: integer
+        profile:
+          description: |-
+            When setting a profile, all other settings must not exceed the limits
+                 *                          which are defined in the profile. Otherwise, a higher profile may
+                 *                          be automatically chosen.
+          enum:
+          - BASELINE
+          - HIGH
+          - MAIN
+          type: string
+      type: object
+    _videos__video__audio_tracks_post_request:
+      properties:
+        lang:
+          description: Track language
+          enum:
+          - fa
+          - en
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - dv
+          - dz
+          - ee
+          - el
+          - eo
+          - es
+          - et
+          - eu
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - "no"
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh
+          - zu
+          type: string
+        audio_track:
+          description: The Mp3 or ACC Audio file.
+          format: binary
+          type: string
+      required:
+      - audio_track
+      - lang
+      type: object
+    _watermarks__watermark__patch_request:
+      properties:
+        title:
+          description: Title of watermark
+          type: string
+        description:
+          description: Description of watermark
+          type: string
+      type: object
+    _domain_post_request:
+      properties:
+        subdomain:
+          description: The subdomain. Only contain lower case letters and digits
+          type: string
+      type: object
+    _channels__channel__audios_post_request_convert_info_inner:
+      properties:
+        audio_bitrate:
+          description: Audio bitrate in kilobit
+          type: integer
+      type: object
+    _channels__channel__profiles_post_request:
+      properties:
+        title:
+          description: Title of the profile
+          type: string
+        description:
+          description: Description of the profile
+          type: string
+        convert_mode:
+          description: Convert mode
+          enum:
+          - auto
+          - manual
+          type: string
+        thumbnail_time:
+          description: Screenshot time for generate thumbnail for video in seconds
+          type: integer
+        watermark_id:
+          description: "If you want to use watermark for a video, use this ID"
+          type: string
+        watermark_area:
+          description: Area of the watermark if watermark_id presents
+          enum:
+          - CENTER
+          - FIX_TOP_LEFT
+          - FIX_TOP_RIGHT
+          - FIX_TOP_CENTER
+          - FIX_BOTTOM_LEFT
+          - FIX_BOTTOM_RIGHT
+          - FIX_BOTTOM_CENTER
+          - ANIMATE_LEFT_TO_RIGHT
+          - ANIMATE_TOP_TO_BOTTOM
+          type: string
+        convert_info:
+          description: Array of convert details
+          items:
+            $ref: '#/components/schemas/_channels__channel__profiles_post_request_convert_info_inner'
+          type: array
+        options:
+          description: Array of option details
+          items:
+            $ref: '#/components/schemas/_channels__channel__profiles_post_request_options_inner'
+          type: array
+      required:
+      - convert_mode
+      - title
+      type: object
+    _profiles__profile__patch_request:
+      properties:
+        title:
+          description: Title of the profile
+          type: string
+        description:
+          description: Description of the profile
+          type: string
+        convert_mode:
+          description: Convert mode
+          enum:
+          - auto
+          - manual
+          type: string
+        thumbnail_time:
+          description: Screenshot time for generate thumbnail for video in seconds
+          type: integer
+        watermark_id:
+          description: "If you want to use watermark for a video, use this ID"
+          type: string
+        watermark_area:
+          description: Area of the watermark if watermark_id presents
+          enum:
+          - CENTER
+          - FIX_TOP_LEFT
+          - FIX_TOP_RIGHT
+          - FIX_TOP_CENTER
+          - FIX_BOTTOM_LEFT
+          - FIX_BOTTOM_RIGHT
+          - FIX_BOTTOM_CENTER
+          - ANIMATE_LEFT_TO_RIGHT
+          - ANIMATE_TOP_TO_BOTTOM
+          type: string
+        convert_info:
+          description: Array of convert details
+          items:
+            $ref: '#/components/schemas/_channels__channel__profiles_post_request_convert_info_inner'
+          type: array
+        options:
+          description: Array of option details
+          items:
+            $ref: '#/components/schemas/_channels__channel__profiles_post_request_options_inner'
+          type: array
+      type: object
+    _channels__channel__watermarks_post_request:
+      properties:
+        title:
+          description: Title of watermark
+          type: string
+        description:
+          description: Description of watermark
+          type: string
+        watermark:
+          description: Watermark file
+          format: binary
+          type: string
+      required:
+      - title
+      - watermark
+      type: object
+    _channels__channel__profiles_post_request_convert_info_inner:
+      properties:
+        audio_bitrate:
+          description: Audio bitrate in kilobit
+          type: integer
+        video_bitrate:
+          description: Video bitrate in kilobit
+          type: integer
+        resolution:
+          description: resolution
+          type: string
+      type: object
+    _channels__channel__audios_post_request:
+      properties:
+        title:
+          description: Title of the audio
+          type: string
+        description:
+          description: Description of the audio
+          type: string
+        audio_url:
+          description: Public URL of audio
+          type: string
+        file_id:
+          description: ID of the audio file
+          type: string
+        convert_mode:
+          description: Convert mode
+          enum:
+          - auto
+          - manual
+          - profile
+          type: string
+        parallel_convert:
+          default: false
+          description: Set this convert parallel when any audio(s) is converting.
+            Parallel limit is 3
+          type: boolean
+        convert_info:
+          description: Array of convert details
+          items:
+            $ref: '#/components/schemas/_channels__channel__audios_post_request_convert_info_inner'
+          type: array
+      required:
+      - convert_mode
+      - title
+      type: object
+    _videos__video__subtitles_post_request:
+      properties:
+        lang:
+          description: Subtitle language
+          enum:
+          - fa
+          - en
+          - aa
+          - ab
+          - ae
+          - af
+          - ak
+          - am
+          - an
+          - ar
+          - av
+          - ay
+          - az
+          - ba
+          - be
+          - bg
+          - bh
+          - bi
+          - bm
+          - bn
+          - bo
+          - br
+          - bs
+          - ca
+          - ce
+          - ch
+          - co
+          - cr
+          - cs
+          - cu
+          - cv
+          - cy
+          - da
+          - de
+          - dv
+          - dz
+          - ee
+          - el
+          - eo
+          - es
+          - et
+          - eu
+          - ff
+          - fi
+          - fj
+          - fo
+          - fr
+          - fy
+          - ga
+          - gd
+          - gl
+          - gn
+          - gu
+          - gv
+          - ha
+          - he
+          - hi
+          - ho
+          - hr
+          - ht
+          - hu
+          - hy
+          - hz
+          - ia
+          - id
+          - ie
+          - ig
+          - ii
+          - ik
+          - io
+          - is
+          - it
+          - iu
+          - ja
+          - jv
+          - ka
+          - kg
+          - ki
+          - kj
+          - kk
+          - kl
+          - km
+          - kn
+          - ko
+          - kr
+          - ks
+          - ku
+          - kv
+          - kw
+          - ky
+          - la
+          - lb
+          - lg
+          - li
+          - ln
+          - lo
+          - lt
+          - lu
+          - lv
+          - mg
+          - mh
+          - mi
+          - mk
+          - ml
+          - mn
+          - mr
+          - ms
+          - mt
+          - my
+          - na
+          - nb
+          - nd
+          - ne
+          - ng
+          - nl
+          - nn
+          - "no"
+          - nr
+          - nv
+          - ny
+          - oc
+          - oj
+          - om
+          - os
+          - pa
+          - pi
+          - pl
+          - ps
+          - pt
+          - qu
+          - rm
+          - rn
+          - ro
+          - ru
+          - rw
+          - sa
+          - sc
+          - sd
+          - se
+          - sg
+          - si
+          - sk
+          - sl
+          - sm
+          - sn
+          - so
+          - sq
+          - sr
+          - ss
+          - st
+          - su
+          - sv
+          - sw
+          - ta
+          - te
+          - tg
+          - th
+          - ti
+          - tk
+          - tl
+          - tn
+          - to
+          - tr
+          - ts
+          - tt
+          - tw
+          - ty
+          - ug
+          - uk
+          - ur
+          - uz
+          - ve
+          - vi
+          - vo
+          - wa
+          - wo
+          - xh
+          - yi
+          - yo
+          - za
+          - zh
+          - zu
+          type: string
+        subtitle:
+          description: The SRT or VTT subtitle file.
+          format: binary
+          type: string
+      required:
+      - lang
+      - subtitle
+      type: object
+    _channels__channel__videos_post_request:
+      properties:
+        title:
+          description: Title of the video
+          type: string
+        description:
+          description: Description of the video
+          type: string
+        video_url:
+          description: Public URL of video
+          type: string
+        file_id:
+          description: ID of the video file
+          type: string
+        convert_mode:
+          description: Convert mode
+          enum:
+          - auto
+          - manual
+          - profile
+          type: string
+        profile_id:
+          description: The profile ID that video convert with it (priority is with
+            video properties)
+          type: string
+        parallel_convert:
+          default: false
+          description: Set this convert parallel when any video(s) is converting.
+            Parallel limit is 3
+          type: boolean
+        thumbnail_time:
+          description: Screenshot time for generate thumbnail for video in seconds
+          type: integer
+        watermark_id:
+          description: "If you want to use watermark for a video, use this ID"
+          type: string
+        watermark_area:
+          description: Area of the watermark if watermark_id presents
+          enum:
+          - CENTER
+          - FIX_TOP_LEFT
+          - FIX_TOP_RIGHT
+          - FIX_TOP_CENTER
+          - FIX_BOTTOM_LEFT
+          - FIX_BOTTOM_RIGHT
+          - FIX_BOTTOM_CENTER
+          - ANIMATE_LEFT_TO_RIGHT
+          - ANIMATE_TOP_TO_BOTTOM
+          type: string
+        convert_info:
+          description: Array of convert details
+          items:
+            $ref: '#/components/schemas/_channels__channel__profiles_post_request_convert_info_inner'
+          type: array
+        options:
+          description: Array of option details
+          items:
+            $ref: '#/components/schemas/_channels__channel__profiles_post_request_options_inner'
+          type: array
+      required:
+      - convert_mode
+      - title
+      type: object
+    _tags_post_request:
+      properties:
+        title:
+          description: Title of tag
+          type: string
+      required:
+      - title
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: Authorization
+      type: apiKey
+x-original-swagger-version: "2.0"

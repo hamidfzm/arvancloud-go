@@ -1,0 +1,1201 @@
+openapi: 3.0.1
+info:
+  title: ArvanCloud Video Advertising Service
+  version: "2.0"
+  x-logo:
+    url: /images/other/arvan-api-docs-logo.svg
+    backgroundColor: white
+    altText: arvancloud
+servers:
+- url: https://napi.arvancloud.ir/vads/2.0
+paths:
+  /campaigns/{campaign}/ads:
+    get:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return all campaign's ads
+      security:
+      - api_key: []
+      summary: Return all campaign's ads.
+      tags:
+      - Campaign's ad
+    post:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_campaigns__campaign__ads_post_request'
+        description: Campaign's ad details
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return attached ad
+      security:
+      - api_key: []
+      summary: Attach ad to campaign
+      tags:
+      - Campaign's ad
+      x-codegen-request-body-name: body
+  /campaigns/{campaign}/ads/{ad}:
+    delete:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Ad detached successfully
+      security:
+      - api_key: []
+      summary: Detach ad from campaign.
+      tags:
+      - Campaign's ad
+    get:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific campaign's ad
+      security:
+      - api_key: []
+      summary: Show attach detail of specific campaign's ad.
+      tags:
+      - Campaign's ad
+    put:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_campaigns__campaign__ads__ad__put_request'
+        description: Campaign's ad details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated campaign's ad
+      security:
+      - api_key: []
+      summary: Update the specified campaign's ad.
+      tags:
+      - Campaign's ad
+      x-codegen-request-body-name: body
+  /ads/{ad}/categories:
+    get:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return all ad's categories
+      security:
+      - api_key: []
+      summary: Return all ad's categories.
+      tags:
+      - Ad's category
+  /ads/{ad}/categories/{category}:
+    delete:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      - description: The Id of category
+        in: path
+        name: category
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Ad detached successfully
+      security:
+      - api_key: []
+      summary: Detach category from ad.
+      tags:
+      - Ad's category
+    put:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      - description: The Id of category
+        in: path
+        name: category
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Ad attached successfully
+      security:
+      - api_key: []
+      summary: Attach category to ad
+      tags:
+      - Ad's category
+  /channels/{channel}/ads:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return all channel's ads
+      security:
+      - api_key: []
+      summary: Return all channel's ads.
+      tags:
+      - Ad
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/_channels__channel__ads_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created ad
+      security:
+      - api_key: []
+      summary: Store a newly ad for specific channel.
+      tags:
+      - Ad
+  /ads/{ad}:
+    delete:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Ad deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified ad.
+      tags:
+      - Ad
+    get:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific ad
+      security:
+      - api_key: []
+      summary: Return the specified ad.
+      tags:
+      - Ad
+    put:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_ads__ad__put_request'
+        description: Ad's details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated ad
+      security:
+      - api_key: []
+      summary: Update the specified ad.
+      tags:
+      - Ad
+      x-codegen-request-body-name: body
+  /channels/{channel}/campaigns:
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit for query
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return all channel's campaigns
+      security:
+      - api_key: []
+      summary: Return all channel's campaigns.
+      tags:
+      - Campaign
+    post:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels__channel__campaigns_post_request'
+        description: Ad's ad details
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created campaign
+      security:
+      - api_key: []
+      summary: Store a newly campaign for specific channel.
+      tags:
+      - Campaign
+      x-codegen-request-body-name: body
+  /campaigns/{campaign}:
+    delete:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Ad deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified campaign.
+      tags:
+      - Campaign
+    get:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific campaign
+      security:
+      - api_key: []
+      summary: Return the specified campaign.
+      tags:
+      - Campaign
+    put:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_campaigns__campaign__put_request'
+        description: Ad's ad details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated campaign
+      security:
+      - api_key: []
+      summary: Update the specified campaign.
+      tags:
+      - Campaign
+      x-codegen-request-body-name: body
+  /categories:
+    get:
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return list of all user category
+      security:
+      - api_key: []
+      summary: Return all user categories.
+      tags:
+      - Category
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_categories_post_request'
+        description: Category details
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created category
+      security:
+      - api_key: []
+      summary: Store a newly category.
+      tags:
+      - Category
+      x-codegen-request-body-name: body
+  /categories/{category}:
+    delete:
+      parameters:
+      - description: The Id of category
+        in: path
+        name: category
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Category deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified category.
+      tags:
+      - Category
+    get:
+      parameters:
+      - description: The Id of category
+        in: path
+        name: category
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific category
+      security:
+      - api_key: []
+      summary: Return the specified category.
+      tags:
+      - Category
+    put:
+      parameters:
+      - description: The Id of category
+        in: path
+        name: category
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_categories__category__put_request'
+        description: Category details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated category
+      security:
+      - api_key: []
+      summary: Update the specified category.
+      tags:
+      - Category
+      x-codegen-request-body-name: body
+  /channels:
+    get:
+      parameters:
+      - description: Filter result
+        in: query
+        name: filter
+        schema:
+          type: string
+      - description: Page number
+        in: query
+        name: page
+        schema:
+          type: integer
+      - description: Page limit
+        in: query
+        name: per_page
+        schema:
+          type: integer
+      responses:
+        "200":
+          content: {}
+          description: Return list of all user channel
+      security:
+      - api_key: []
+      summary: Return all user channels.
+      tags:
+      - Channel
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels_post_request'
+        description: Channel details
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created channel
+      security:
+      - api_key: []
+      summary: Store a newly channel.
+      tags:
+      - Channel
+      x-codegen-request-body-name: body
+  /channels/{channel}:
+    delete:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Channel deleted successfully
+      security:
+      - api_key: []
+      summary: Remove the specified channel.
+      tags:
+      - Channel
+    get:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific channel
+      security:
+      - api_key: []
+      summary: Return the specified channel.
+      tags:
+      - Channel
+    put:
+      parameters:
+      - description: The Id of channel
+        in: path
+        name: channel
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_channels__channel__put_request'
+        description: Channel details
+        required: true
+      responses:
+        "200":
+          content: {}
+          description: Return updated channel
+      security:
+      - api_key: []
+      summary: Update the specified channel.
+      tags:
+      - Channel
+      x-codegen-request-body-name: body
+  /ads/{ad}/reports/track/{event}/{period}:
+    get:
+      parameters:
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      - description: Event type
+        in: path
+        name: event
+        required: true
+        schema:
+          enum:
+          - creativeView
+          - start
+          - firstQuartile
+          - midpoint
+          - thirdQuartile
+          - complete
+          - mute
+          - unmute
+          - pause
+          - rewind
+          - resume
+          - fullscreen
+          - skip
+          - closeLinear
+          - exitFullscreen
+          - expand
+          - collapse
+          - acceptInvitationLinear
+          - progress
+          - click
+          - impression
+          type: string
+      - description: Report period
+        in: path
+        name: period
+        required: true
+        schema:
+          enum:
+          - hourly
+          - daily
+          - weekly
+          - monthly
+          type: string
+      - description: "Starting datetime of report. Format: 'YYYY-MM-DD H:i:s' like:\
+          \ '2018-01-01 00:00:00'"
+        in: query
+        name: from
+        required: true
+        schema:
+          type: string
+      - description: "Ending datetime of report. Format: 'YYYY-MM-DD H:i:s' like:\
+          \ '2018-01-01 00:00:00'"
+        in: query
+        name: to
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific channel
+      security:
+      - api_key: []
+      summary: Ad track report per event.
+      tags:
+      - Report
+  /campaigns/{campaign}/ads/{ad}/reports/track/{event}/{period}:
+    get:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      - description: The Id of ad
+        in: path
+        name: ad
+        required: true
+        schema:
+          type: string
+      - description: Event type
+        in: path
+        name: event
+        required: true
+        schema:
+          enum:
+          - creativeView
+          - start
+          - firstQuartile
+          - midpoint
+          - thirdQuartile
+          - complete
+          - mute
+          - unmute
+          - pause
+          - rewind
+          - resume
+          - fullscreen
+          - skip
+          - closeLinear
+          - exitFullscreen
+          - expand
+          - collapse
+          - acceptInvitationLinear
+          - progress
+          - click
+          - impression
+          type: string
+      - description: Report period
+        in: path
+        name: period
+        required: true
+        schema:
+          enum:
+          - hourly
+          - daily
+          - weekly
+          - monthly
+          type: string
+      - description: "Starting datetime of report. Format: 'YYYY-MM-DD H:i:s' like:\
+          \ '2018-01-01 00:00:00'"
+        in: query
+        name: from
+        required: true
+        schema:
+          type: string
+      - description: "Ending datetime of report. Format: 'YYYY-MM-DD H:i:s' like:\
+          \ '2018-01-01 00:00:00'"
+        in: query
+        name: to
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific channel
+      security:
+      - api_key: []
+      summary: Ad in campaign track report per event.
+      tags:
+      - Report
+  /campaigns/{campaign}/reports/track/{event}/{period}:
+    get:
+      parameters:
+      - description: The Id of campaign
+        in: path
+        name: campaign
+        required: true
+        schema:
+          type: string
+      - description: Event type
+        in: path
+        name: event
+        required: true
+        schema:
+          enum:
+          - creativeView
+          - start
+          - firstQuartile
+          - midpoint
+          - thirdQuartile
+          - complete
+          - mute
+          - unmute
+          - pause
+          - rewind
+          - resume
+          - fullscreen
+          - skip
+          - closeLinear
+          - exitFullscreen
+          - expand
+          - collapse
+          - acceptInvitationLinear
+          - progress
+          - click
+          - impression
+          type: string
+      - description: Report period
+        in: path
+        name: period
+        required: true
+        schema:
+          enum:
+          - hourly
+          - daily
+          - weekly
+          - monthly
+          type: string
+      - description: "Starting datetime of report. Format: 'YYYY-MM-DD H:i:s' like:\
+          \ '2018-01-01 00:00:00'"
+        in: query
+        name: from
+        required: true
+        schema:
+          type: string
+      - description: "Ending datetime of report. Format: 'YYYY-MM-DD H:i:s' like:\
+          \ '2018-01-01 00:00:00'"
+        in: query
+        name: to
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          content: {}
+          description: Return the specific channel
+      security:
+      - api_key: []
+      summary: Campaign track report per event.
+      tags:
+      - Report
+  /domain:
+    get:
+      responses:
+        "200":
+          content: {}
+          description: Return User Domain
+        "404":
+          content: {}
+          description: If user has no domain
+      security:
+      - api_key: []
+      summary: Return User Domain.
+      tags:
+      - Domain
+    post:
+      requestBody:
+        content:
+          '*/*':
+            schema:
+              $ref: '#/components/schemas/_domain_post_request'
+        required: true
+      responses:
+        "201":
+          content: {}
+          description: Return created domain
+      security:
+      - api_key: []
+      summary: Set subdomain for VAds service.
+      tags:
+      - Domain
+      x-codegen-request-body-name: body
+components:
+  schemas:
+    _channels_post_request:
+      properties:
+        title:
+          description: Title of channel
+          type: string
+        description:
+          description: Description of channel
+          type: string
+      required:
+      - title
+      type: object
+    _channels__channel__ads_post_request:
+      properties:
+        title:
+          description: Title of ad
+          type: string
+        description:
+          description: Description of ad
+          type: string
+        ad_type:
+          description: Ad type
+          enum:
+          - pre_roll
+          - mid_roll
+          - post_roll
+          type: string
+        skip_type:
+          description: Skip type
+          enum:
+          - never
+          - allow
+          - follow_campaign
+          type: string
+        skip_offset:
+          description: Skip offset in seconds (required if skip type is allow)
+          format: int32
+          type: integer
+        click_through:
+          description: Click URL when user click on ad
+          type: string
+        media_file:
+          description: Media file for ad (Accept video/mp4 for pre_roll ads)
+          format: binary
+          type: string
+      required:
+      - ad_type
+      - click_through
+      - media_file
+      - skip_type
+      - title
+      type: object
+    _ads__ad__put_request:
+      properties:
+        title:
+          description: Title of ad
+          type: string
+        description:
+          description: Description of ad
+          type: string
+        ad_type:
+          description: Ad type
+          enum:
+          - pre_roll
+          - mid_roll
+          - post_roll
+          type: string
+        play_time:
+          description: Specify mid-roll time in seconds
+          type: integer
+        skip_type:
+          description: Skip type
+          enum:
+          - never
+          - allow
+          - follow_campaign
+          type: string
+        skip_offset:
+          description: Skip offset in seconds (required if skip type is allow)
+          type: integer
+        click_through:
+          description: Click URL when user click on ad
+          type: string
+      type: object
+    _categories_post_request:
+      properties:
+        title:
+          description: Title of category
+          type: string
+      required:
+      - title
+      type: object
+    _campaigns__campaign__put_request:
+      properties:
+        title:
+          description: Title of campaign
+          type: string
+        description:
+          description: Description of campaign
+          type: string
+        skip_type:
+          description: Skip type - If ad skip_type is follow_campaign then this will
+            be use
+          enum:
+          - never
+          - allow
+          type: string
+        skip_offset:
+          description: Skip offset in seconds (required if skip type is allow)
+          type: integer
+        active:
+          description: If false then vast not working
+          type: boolean
+      type: object
+    _categories__category__put_request:
+      properties:
+        title:
+          description: Title of category
+          type: string
+      type: object
+    _campaigns__campaign__ads_post_request:
+      properties:
+        ad_id:
+          description: |-
+            The id of ad
+                 *                  Notice: Both ad & campaign most belongs to same channel.
+          type: string
+        weight:
+          description: |-
+            Weight of ad.
+                 *                  When exists similar type ad(s,) use weight for choose ad to insert in VAST XML
+          type: integer
+        filter_device:
+          description: Set device filter for show ads
+          items:
+            enum:
+            - mobile
+            - tablet
+            - desktop
+            - other
+            type: string
+          type: array
+        filter_browser:
+          description: Set browser filter for show ads
+          items:
+            enum:
+            - firefox
+            - chrome
+            - opera
+            - safari
+            - microsoft edge
+            - internet explorer
+            - other
+            type: string
+          type: array
+        filter_platform:
+          description: Set platform filter for show ads
+          items:
+            enum:
+            - gnu/linux
+            - windows
+            - mac
+            - android
+            - ios
+            - other
+            type: string
+          type: array
+        quota:
+          description: Limited condition(s) of trigger event that stop present ad
+            in campaign
+          items:
+            $ref: '#/components/schemas/_campaigns__campaign__ads_post_request_quota_inner'
+          type: array
+        quota_type:
+          description: Quota type
+          enum:
+          - all
+          - any
+          type: string
+      required:
+      - ad_id
+      - weight
+      type: object
+    _campaigns__campaign__ads_post_request_quota_inner:
+      properties:
+        key:
+          description: The event of this quota
+          enum:
+          - click
+          - creativeView
+          - start
+          - firstQuartile
+          - midpoint
+          - thirdQuartile
+          - complete
+          - mute
+          - unmute
+          - pause
+          - rewind
+          - resume
+          - fullscreen
+          - skip
+          - closeLinear
+          - exitFullscreen
+          - expand
+          - collapse
+          - acceptInvitationLinear
+          - progress
+          - impression
+          type: string
+        value:
+          description: Value of limit this quota
+          type: integer
+      required:
+      - key
+      - value
+      type: object
+    _channels__channel__campaigns_post_request:
+      properties:
+        title:
+          description: Title of campaign
+          type: string
+        description:
+          description: Description of campaign
+          type: string
+        skip_type:
+          description: Skip type - If ad skip_type is follow_campaign then this will
+            be use
+          enum:
+          - never
+          - allow
+          type: string
+        skip_offset:
+          description: Skip offset in seconds (required if skip type is allow)
+          type: integer
+        active:
+          description: If false then vast not working
+          type: boolean
+      required:
+      - active
+      - skip_type
+      - title
+      type: object
+    _channels__channel__put_request:
+      properties:
+        title:
+          description: Title of channel
+          type: string
+        description:
+          description: Description of channel
+          type: string
+      type: object
+    _domain_post_request:
+      properties:
+        subdomain:
+          description: The subdomain. Only contain lower case letters and digits
+          type: string
+      type: object
+    _campaigns__campaign__ads__ad__put_request:
+      properties:
+        weight:
+          description: |-
+            Weight of ad.
+                 *                  When exists similar type ad(s,) use weight for choose ad to insert in VAST XML
+          type: integer
+        filter_device:
+          description: Set device filter for show ads
+          items:
+            enum:
+            - mobile
+            - tablet
+            - desktop
+            - other
+            type: string
+          type: array
+        filter_browser:
+          description: Set browser filter for show ads
+          items:
+            enum:
+            - firefox
+            - chrome
+            - opera
+            - safari
+            - microsoft edge
+            - internet explorer
+            - other
+            type: string
+          type: array
+        filter_platform:
+          description: Set platform filter for show ads
+          items:
+            enum:
+            - gnu/linux
+            - windows
+            - mac
+            - android
+            - ios
+            - other
+            type: string
+          type: array
+        quota:
+          description: Limited condition(s) of trigger event that stop present ad
+            in campaign
+          items:
+            $ref: '#/components/schemas/_campaigns__campaign__ads_post_request_quota_inner'
+          type: array
+        quota_type:
+          description: Quota type
+          enum:
+          - all
+          - any
+          type: string
+      type: object
+  securitySchemes:
+    api_key:
+      in: header
+      name: Authorization
+      type: apiKey
+x-original-swagger-version: "2.0"
